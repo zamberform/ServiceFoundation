@@ -1,0 +1,45 @@
+version: "3"
+services:
+  gin:
+    build:
+      context: .
+      dockerfile: images/gin/Dockerfile
+    volumes:
+      - ./src:/src
+    depends_on:
+      - mongo
+      - redis
+    ports:
+      - 3000:3000
+    environment:
+      GO111MODULE: "on"
+  nginx:
+    build:
+      context: ./images/nginx
+      dockerfile: Dockerfile
+    depends_on:
+      - gin
+    ports:
+      - 80:80
+    environment:
+      TZ: "Asia/Tokyo"
+  mongo:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    ports:
+      - 27017:27017
+    volumes:
+      - ./db:/data/db
+      - ./images/mongo/mongod.conf:/etc/mongod.conf 
+  redis:
+    image: redis:alpine
+    volumes:
+      - ./images/redis/redis.conf:/usr/local/etc/redis/redis.conf
+    ports:
+      - 6379:6379
+volumes:
+   db:
+
