@@ -7,7 +7,7 @@ services:
     volumes:
       - ./src:/src
     depends_on:
-      - mongo
+      - mysql
       - redis
     ports:
       - 3000:3000
@@ -23,8 +23,8 @@ services:
       - 80:80
     environment:
       TZ: "Asia/Tokyo"
-  mongo:
-    image: mongo
+  mysql:
+    image: mysql
     restart: always
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
