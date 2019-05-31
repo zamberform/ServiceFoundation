@@ -1,2 +1,2 @@
-# gin-mongo-nginx-redis
-base for the project development
+# gin-mysql-vue-nginx-redis
+base for the server project development, this is foundation
