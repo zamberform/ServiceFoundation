@@ -20,7 +20,6 @@ func Setup() {
 
 	ServerSetting.ReadTimeout *= time.Second
 	ServerSetting.WriteTimeout *= time.Second
-	RediSetting.IdleTimeout *= time.Second
 }
 
 func configMap(filename string, v interface{}) {

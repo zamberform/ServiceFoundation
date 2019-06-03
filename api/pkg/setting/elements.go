@@ -7,9 +7,13 @@ type App struct {
 
 	JwtSecret string
 	PrefixUrl string
+	APIPrefix string
 
 	RuntimeRootPath string
 	TimeFormat      string
+
+	GCProjectId     string
+	GCPStackLogName string
 }
 
 type Server struct {
@@ -20,11 +24,10 @@ type Server struct {
 
 type Redis struct {
 	Host        string
-	Port        string
 	Password    string
 	MaxIdle     int
 	MaxActive   int
-	IdleTimeout time.Duration
+	IdleTimeout int
 }
 
 type Database struct {

@@ -11,16 +11,20 @@ import (
 
 var db *gorm.DB
 
-func Setup() {
+func Instance() *gorm.DB {
+	return db
+}
+
+func Setup(userName, password, host, name string) {
 	var err error
 	db, err = gorm.Open(
 		setting.DBSetting.Type,
 		fmt.Sprintf(
 			"%s:%s@tcp(%s)/%s?charset=utf8&parseTime=True&loc=Local",
-			setting.DBSetting.User,
-			setting.DBSetting.Password,
-			setting.DBSetting.Host,
-			setting.DBSetting.Name),
+			userName,
+			password,
+			host,
+			name),
 	)
 	if err != nil {
 		log.Fatalf("db.Setup err: %v", err)
