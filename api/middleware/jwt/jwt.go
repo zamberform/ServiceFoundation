@@ -13,10 +13,6 @@ import (
 
 var jwtSecret []byte
 
-func Init(secretWords string) {
-	jwtSecret = []byte(secretWords)
-}
-
 func ParseToken(token string) (*Claims, error) {
 	tokenClaims, err := jwt.ParseWithClaims(token, &Claims{}, func(token *jwt.Token) (interface{}, error) {
 		return jwtSecret, nil
@@ -31,7 +27,7 @@ func ParseToken(token string) (*Claims, error) {
 	return nil, err
 }
 
-func GenerateToken(userId, uuid string) (string, error) {
+func GenerateToken(userId, uuid, secret string) (string, error) {
 	nowTime := time.Now()
 	expireTime := nowTime.Add(3 * time.Hour)
 
@@ -45,7 +41,7 @@ func GenerateToken(userId, uuid string) (string, error) {
 	}
 
 	tokenClaims := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	token, err := tokenClaims.SignedString(jwtSecret)
+	token, err := tokenClaims.SignedString(secret)
 
 	return token, err
 }

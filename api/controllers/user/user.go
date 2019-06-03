@@ -4,6 +4,7 @@ import (
 	"api/middleware/jwt"
 	"api/model"
 	"api/pkg/gdb"
+	"api/pkg/setting"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -32,7 +33,7 @@ func Login(c *gin.Context) {
 		userPlatformString = user.UUID
 	}
 
-	token, err := jwt.GenerateToken(string(userId), userPlatformString)
+	token, err := jwt.GenerateToken(string(userId), userPlatformString, setting.AppSetting.JwtSecret)
 	if err != nil {
 
 		return

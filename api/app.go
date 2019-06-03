@@ -1,7 +1,6 @@
 package main
 
 import (
-	"api/middleware/jwt"
 	"api/pkg/gdb"
 	"api/pkg/gredis"
 	"api/pkg/logging"
