@@ -14,7 +14,7 @@ func DoAction(c *gin.Context) {
 	if exists {
 		user = userC.(model.User)
 
-		user.Introduce += "vip"
+		user.Introduce += "action"
 		if err := gdb.Instance().Model(&user).Update("introduce", user.Introduce); err != nil {
 
 			return
