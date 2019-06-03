@@ -1,11 +1,14 @@
 package routers
 
 import (
-	"api/controllers/action"
-	"api/controllers/app"
-	"api/controllers/user"
-	"api/middleware/auth"
-	"api/middleware/jwt"
+	"server/controllers/action"
+	"server/controllers/app"
+	"server/controllers/user"
+
+	"server/admin/action"
+
+	"server/middleware/auth"
+	"server/middleware/jwt"
 
 	"github.com/gin-gonic/gin"
 )
@@ -31,6 +34,13 @@ func InitRouter(apiPrefix string) *gin.Engine {
 		apis.POST("/vip", auth.SigninRequired, auth.VipReqired, action.DoAction)
 		// real user can quit
 		apis.POST("/quits", user.Withdrawal)
+	}
+
+	cms := r.Group("/cms", auth.AdminRequired)
+	cms.Use(jwt.ApiJwt())
+	{
+		// real user can do the action
+		cms.POST("/users", action.AdminAction)
 	}
 
 	return r

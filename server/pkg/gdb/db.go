@@ -1,7 +1,6 @@
 package gdb
 
 import (
-	"api/pkg/setting"
 	"fmt"
 	"log"
 	"time"
@@ -15,10 +14,10 @@ func Instance() *gorm.DB {
 	return db
 }
 
-func Setup(userName, password, host, name string) {
+func Setup(dbType, userName, password, host, name string) {
 	var err error
 	db, err = gorm.Open(
-		setting.DBSetting.Type,
+		dbType,
 		fmt.Sprintf(
 			"%s:%s@tcp(%s)/%s?charset=utf8&parseTime=True&loc=Local",
 			userName,

@@ -1,9 +1,9 @@
 package jwt
 
 import (
-	"api/middleware/language"
-	"api/pkg/codes"
-	"api/utils"
+	"server/middleware/language"
+	"server/pkg/codes"
+	"server/utils"
 	"net/http"
 	"time"
 

@@ -1,10 +1,10 @@
 package user
 
 import (
-	"api/middleware/jwt"
-	"api/model"
-	"api/pkg/gdb"
-	"api/pkg/setting"
+	"server/middleware/jwt"
+	"server/model"
+	"server/pkg/gdb"
+	"server/pkg/setting"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

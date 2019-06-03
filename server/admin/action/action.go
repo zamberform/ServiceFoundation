@@ -1,8 +1,8 @@
 package action
 
 import (
-	"api/model"
-	"api/pkg/gdb"
+	"server/model"
+	"server/pkg/gdb"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -14,7 +14,7 @@ func DoAction(c *gin.Context) {
 	if exists {
 		user = userC.(model.User)
 
-		user.Introduce += "action"
+		user.Introduce += "admin"
 		if err := gdb.Instance().Model(&user).Update("introduce", user.Introduce); err != nil {
 
 			return

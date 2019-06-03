@@ -1,11 +1,11 @@
 package auth
 
 import (
-	"api/middleware/jwt"
-	"api/middleware/language"
-	"api/model"
-	"api/pkg/codes"
-	"api/pkg/gdb"
+	"server/middleware/jwt"
+	"server/middleware/language"
+	"server/model"
+	"server/pkg/codes"
+	"server/pkg/gdb"
 	"errors"
 
 	"github.com/gin-gonic/gin"

@@ -1,6 +1,6 @@
 package language
 
-import "api/pkg/codes"
+import "server/pkg/codes"
 
 var MsgEnFlags = map[int]string{
 	codes.SUCCESS:        "ok",

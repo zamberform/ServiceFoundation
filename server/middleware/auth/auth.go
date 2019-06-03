@@ -1,13 +1,32 @@
 package auth
 
 import (
-	"api/model"
-	"api/pkg/gdb"
+	"server/model"
+	"server/pkg/gdb"
 
 	"github.com/gin-gonic/gin"
 )
 
 func SigninRequired(c *gin.Context) {
+	var user model.User
+	var err error
+	if user, err = searchUser(c); err != nil {
+
+		return
+	}
+
+	if user.Status <= 0 {
+		return
+	}
+
+	if user.Role <= 1 {
+		return
+	}
+	c.Set("user", user)
+	c.Next()
+}
+
+func AdminRequired(c *gin.Context) {
 	var user model.User
 	var err error
 	if user, err = searchUser(c); err != nil {

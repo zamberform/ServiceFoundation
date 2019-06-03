@@ -1,11 +1,11 @@
 package main
 
 import (
-	"api/pkg/gdb"
-	"api/pkg/gredis"
-	"api/pkg/logging"
-	"api/pkg/setting"
-	"api/routers"
+	"server/pkg/gdb"
+	"server/pkg/gredis"
+	"server/pkg/logging"
+	"server/pkg/setting"
+	"server/routers"
 	"fmt"
 	"net/http"
 
