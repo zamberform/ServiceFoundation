@@ -2,6 +2,7 @@ package auth
 
 import (
 	"api/model"
+	"api/pkg/gdb"
 
 	"github.com/gin-gonic/gin"
 )
@@ -26,19 +27,18 @@ func SigninRequired(c *gin.Context) {
 }
 
 func VipReqired(c *gin.Context) {
+	userC, exists := c.Get("user")
 	var user model.User
-	var err error
-	if user, err = searchUser(c); err != nil {
+	if exists {
+		user = userC.(model.User)
 
-		return
-	}
-	if user.Status <= 0 {
-		return
-	}
+		user.Introduce += "vip"
+		if err := gdb.Instance().Model(&user).Update("introduce", user.Introduce); err != nil {
 
-	if user.Role <= 3 {
-		return
+			return
+		}
+
+		c.Set("user", user)
+		c.Next()
 	}
-	c.Set("user", user)
-	c.Next()
 }

@@ -17,13 +17,27 @@ func Init() {
 
 }
 
-func GenerateToken(username, password string) (string, error) {
+func ParseToken(token string) (*Claims, error) {
+	tokenClaims, err := jwt.ParseWithClaims(token, &Claims{}, func(token *jwt.Token) (interface{}, error) {
+		return jwtSecret, nil
+	})
+
+	if tokenClaims != nil {
+		if claims, ok := tokenClaims.Claims.(*Claims); ok && tokenClaims.Valid {
+			return claims, nil
+		}
+	}
+
+	return nil, err
+}
+
+func GenerateToken(userId, uuid string) (string, error) {
 	nowTime := time.Now()
 	expireTime := nowTime.Add(3 * time.Hour)
 
 	claims := Claims{
-		utils.EncodeMD5(username),
-		utils.EncodeMD5(password),
+		utils.EncodeMD5(userId),
+		utils.EncodeMD5(uuid),
 		jwt.StandardClaims{
 			ExpiresAt: expireTime.Unix(),
 			Issuer:    "service-api",

@@ -14,12 +14,11 @@ func Login(c *gin.Context) {
 	platformId, _ := c.Get("platform")
 
 	var user model.User
-	var userUuid string
-	var password string
+	var userId uint
+	var userPlatformString string
 	if err := gdb.Instance().Where("uuid = ? And platform = ?", uuid, platformId).Find(&user).Error; err == nil {
-		userUuid = user.UUID
-		password = user.Pass
-		return
+		userId = user.ID
+		userPlatformString = user.Pass
 	} else {
 		var newUser model.User
 		newUser.UUID = uuid.(string)
@@ -29,11 +28,11 @@ func Login(c *gin.Context) {
 
 		}
 
-		userUuid = user.UUID
-		password = "123456"
+		userId = user.ID
+		userPlatformString = user.UUID
 	}
 
-	token, err := jwt.GenerateToken(userUuid, password)
+	token, err := jwt.GenerateToken(userId, userPlatformString)
 	if err != nil {
 
 		return
