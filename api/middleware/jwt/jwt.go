@@ -13,8 +13,8 @@ import (
 
 var jwtSecret []byte
 
-func Init() {
-
+func Init(secretWords string) {
+	jwtSecret = []byte(secretWords)
 }
 
 func ParseToken(token string) (*Claims, error) {

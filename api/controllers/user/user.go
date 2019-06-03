@@ -32,7 +32,7 @@ func Login(c *gin.Context) {
 		userPlatformString = user.UUID
 	}
 
-	token, err := jwt.GenerateToken(userId, userPlatformString)
+	token, err := jwt.GenerateToken(string(userId), userPlatformString)
 	if err != nil {
 
 		return

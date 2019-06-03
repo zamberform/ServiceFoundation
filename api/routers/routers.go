@@ -14,6 +14,7 @@ func InitRouter(apiPrefix string) *gin.Engine {
 	r := gin.New()
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
+	
 
 	// check app version
 	r.POST("/app", app.AppInfo)
