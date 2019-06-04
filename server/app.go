@@ -1,13 +1,14 @@
 package main
 
 import (
+	"fmt"
+	"net/http"
 	"server/pkg/gdb"
 	"server/pkg/gredis"
 	"server/pkg/logging"
 	"server/pkg/setting"
 	"server/routers"
-	"fmt"
-	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -21,6 +22,7 @@ func init() {
 		setting.AppSetting.GCPStackLogName)
 	// init db
 	gdb.Setup(
+		setting.DBSetting.Type,
 		setting.DBSetting.User,
 		setting.DBSetting.Password,
 		setting.DBSetting.Host,
@@ -36,15 +38,14 @@ func init() {
 	if err != nil {
 		logging.Fatal("init api server err in redis: %v ", err)
 	}
-	jwt.Init(setting.AppSetting.JwtSecret)
 }
 
 func main() {
 	gin.SetMode(setting.AppSetting.RunMode)
 
 	routersInit := routers.InitRouter(setting.AppSetting.APIPrefix)
-	readTimeout := setting.ServerSetting.ReadTimeout
-	writeTimeout := setting.ServerSetting.WriteTimeout
+	readTimeout := time.Duration(setting.ServerSetting.ReadTimeout) * time.Second
+	writeTimeout := time.Duration(setting.ServerSetting.WriteTimeout) * time.Second
 	endPoint := fmt.Sprintf(":%d", setting.ServerSetting.HttpPort)
 	maxHeaderBytes := 1 << 20
 

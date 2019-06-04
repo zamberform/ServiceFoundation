@@ -1,11 +1,11 @@
 package user
 
 import (
+	"net/http"
 	"server/middleware/jwt"
 	"server/model"
 	"server/pkg/gdb"
 	"server/pkg/setting"
-	"net/http"
 
 	"github.com/gin-gonic/gin"
 )

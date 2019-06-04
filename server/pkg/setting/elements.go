@@ -1,7 +1,5 @@
 package setting
 
-import "time"
-
 type App struct {
 	RunMode string
 
@@ -18,8 +16,8 @@ type App struct {
 
 type Server struct {
 	HttpPort     int
-	ReadTimeout  time.Duration
-	WriteTimeout time.Duration
+	ReadTimeout  int
+	WriteTimeout int
 }
 
 type Redis struct {

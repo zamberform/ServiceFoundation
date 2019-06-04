@@ -5,7 +5,7 @@ import (
 	"server/controllers/app"
 	"server/controllers/user"
 
-	"server/admin/action"
+	"server/admin/suaction"
 
 	"server/middleware/auth"
 	"server/middleware/jwt"
@@ -17,7 +17,6 @@ func InitRouter(apiPrefix string) *gin.Engine {
 	r := gin.New()
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
-	
 
 	// check app version
 	r.POST("/app", app.AppInfo)
@@ -40,7 +39,7 @@ func InitRouter(apiPrefix string) *gin.Engine {
 	cms.Use(jwt.ApiJwt())
 	{
 		// real user can do the action
-		cms.POST("/users", action.AdminAction)
+		cms.POST("/users", suaction.AdminAction)
 	}
 
 	return r

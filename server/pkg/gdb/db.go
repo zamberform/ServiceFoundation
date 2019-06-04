@@ -30,7 +30,7 @@ func Setup(dbType, userName, password, host, name string) {
 	}
 
 	gorm.DefaultTableNameHandler = func(db *gorm.DB, defaultTableName string) string {
-		return setting.DBSetting.TablePrefix + defaultTableName
+		return dbType + defaultTableName
 	}
 
 	db.SingularTable(true)

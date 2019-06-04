@@ -2,7 +2,6 @@ package setting
 
 import (
 	"log"
-	"time"
 
 	"github.com/go-ini/ini"
 )
@@ -13,13 +12,10 @@ var RediSetting = &Redis{}
 var DBSetting = &Database{}
 
 func Setup() {
-	configMap("configs/common.ini", ServerSetting)
+	configMap("configs/server.ini", ServerSetting)
 	configMap("configs/app.ini", AppSetting)
 	configMap("configs/db.ini", DBSetting)
 	configMap("configs/redis.ini", RediSetting)
-
-	ServerSetting.ReadTimeout *= time.Second
-	ServerSetting.WriteTimeout *= time.Second
 }
 
 func configMap(filename string, v interface{}) {
