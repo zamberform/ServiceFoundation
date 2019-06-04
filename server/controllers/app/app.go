@@ -1,9 +1,9 @@
 package app
 
 import (
+	"net/http"
 	"server/model"
 	"server/pkg/gdb"
-	"net/http"
 
 	"github.com/gin-gonic/gin"
 )

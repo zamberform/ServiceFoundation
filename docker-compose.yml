@@ -5,7 +5,7 @@ services:
       context: .
       dockerfile: images/gin/Dockerfile
     volumes:
-      - ./src:/src
+      - ./server:/server
     depends_on:
       - mysql
       - redis
@@ -25,15 +25,17 @@ services:
       TZ: "Asia/Tokyo"
   mysql:
     image: mysql
-    restart: always
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
+      MYSQL_DATABASE: sample_db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: example
+      MYSQL_ROOT_PASSWORD: pass
     ports:
-      - 27017:27017
+      - 3306:3306
     volumes:
-      - ./db:/data/db
-      - ./images/mongo/mongod.conf:/etc/mongod.conf 
+      - ./db:/var/lib/mysql
+      - ./images/mysql/init:/docker-entrypoint-initdb.d
+      - ./images/mysql/default_my.cnf:/etc/mysql/conf.d/default_my.cnf
   redis:
     image: redis:alpine
     volumes:
