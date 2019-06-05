@@ -27,15 +27,15 @@ services:
     image: mysql
     environment:
       MYSQL_DATABASE: sample_db
-      MYSQL_USER: user
+      MYSQL_USER: tester
       MYSQL_PASSWORD: example
       MYSQL_ROOT_PASSWORD: pass
     ports:
       - 3306:3306
     volumes:
-      - ./db:/var/lib/mysql
-      - ./images/mysql/init:/docker-entrypoint-initdb.d
+      - ./db:/var/lib/mysql:rw
       - ./images/mysql/default_my.cnf:/etc/mysql/conf.d/default_my.cnf
+      - ./images/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
   redis:
     image: redis:alpine
     volumes:
