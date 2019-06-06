@@ -1,17 +1,17 @@
 package auth
 
 import (
+	"errors"
 	"server/middleware/jwt"
 	"server/middleware/language"
-	"server/model"
+	"server/models/db"
 	"server/pkg/codes"
 	"server/pkg/gdb"
-	"errors"
 
 	"github.com/gin-gonic/gin"
 )
 
-func searchUser(c *gin.Context) (user model.User, err error) {
+func searchUser(c *gin.Context) (user db.User, err error) {
 	tokenString, isExist := c.Get("token")
 	if !isExist {
 		return user, errors.New(language.GetMsg(codes.ERROR_USER_NOT_FOUND))

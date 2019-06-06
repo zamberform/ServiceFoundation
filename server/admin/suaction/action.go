@@ -2,7 +2,7 @@ package suaction
 
 import (
 	"net/http"
-	"server/model"
+	"server/models/db"
 	"server/pkg/gdb"
 
 	"github.com/gin-gonic/gin"
@@ -10,9 +10,9 @@ import (
 
 func AdminAction(c *gin.Context) {
 	userC, exists := c.Get("user")
-	var user model.User
+	var user db.User
 	if exists {
-		user = userC.(model.User)
+		user = userC.(db.User)
 
 		user.Introduce += "action"
 		if err := gdb.Instance().Model(&user).Update("introduce", user.Introduce); err != nil {

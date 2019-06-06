@@ -1,9 +1,12 @@
 package user
 
 import (
+	"log"
 	"net/http"
+	"server/controllers/error"
 	"server/middleware/jwt"
-	"server/model"
+	"server/models/db"
+	"server/models/request"
 	"server/pkg/gdb"
 	"server/pkg/setting"
 
@@ -11,22 +14,27 @@ import (
 )
 
 func Login(c *gin.Context) {
-	uuid, _ := c.Get("uuid")
-	platformId, _ := c.Get("platform")
-
-	var user model.User
+	var commonRequest request.CommonReq
+	if err := c.ShouldBindJSON(&commonRequest); err != nil {
+		log.Fatalf("req.AppInfo err: %v", err)
+		return
+	}
+	uuid := commonRequest.User.Uuid
+	platformId := commonRequest.Platform
+	var user db.User
 	var userId uint
 	var userPlatformString string
-	if err := gdb.Instance().Where("uuid = ? And platform = ?", uuid, platformId).Find(&user).Error; err == nil {
+	if err := gdb.Instance().Where("uuid = ? And fk_platform_id = ?", uuid, platformId).Find(&user).Error; err == nil {
 		userId = user.ID
 		userPlatformString = user.Pass
 	} else {
-		var newUser model.User
-		newUser.UUID = uuid.(string)
-		newUser.Platform = platformId.(int)
+		var newUser db.User
+		newUser.UUID = uuid
 
 		if err := gdb.Instance().Create(&newUser).Error; err != nil {
-
+			log.Fatalf("get.db.UserLoging err: %v", err)
+			error.SendErrJSON("error", c)
+			return
 		}
 
 		userId = user.ID
@@ -35,7 +43,8 @@ func Login(c *gin.Context) {
 
 	token, err := jwt.GenerateToken(string(userId), userPlatformString, setting.AppSetting.JwtSecret)
 	if err != nil {
-
+		log.Fatalf("get.db.UserLoging err: %v", err)
+		error.SendErrJSON("error", c)
 		return
 	}
 
