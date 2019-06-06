@@ -12,8 +12,9 @@ CREATE TABLE `app` (
   `update_status` int(10) DEFAULT '0',
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NOW(),
-  FOREIGN KEY `fk_platform_id`(`id`) 
-  REFERENCES `platform` (`id`)
+  `platform_id` int(11) DEFAULT NULL,
+  FOREIGN KEY (`platform_id`) 
+  REFERENCES `platform` (`id`),
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 -- ----------------------------
@@ -47,12 +48,13 @@ CREATE TABLE `user` (
   `uuid` varchar(250) DEFAULT NULL,
   `email` varchar(250) DEFAULT NULL,
   `pass` varchar(250) DEFAULT NULL,
+  `platform_id` int(11) DEFAULT NULL,
   `status` int(11) DEFAULT '0',
   `avatar_url` varchar(500) DEFAULT NULL,
   `sex` tinyint(1) NOT NULL DEFAULT '0',
   `introduce` varchar(500) DEFAULT NULL,
-  FOREIGN KEY `fk_platform_id`(`id`) 
-  REFERENCES `platform` (`id`)
+  FOREIGN KEY (`platform_id`) 
+  REFERENCES `platform` (`id`),
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 -- ----------------------------
