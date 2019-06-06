@@ -4,14 +4,14 @@ import (
 	"errors"
 	"server/middleware/jwt"
 	"server/middleware/language"
-	"server/models/db"
+	"server/models/database"
 	"server/pkg/codes"
 	"server/pkg/gdb"
 
 	"github.com/gin-gonic/gin"
 )
 
-func searchUser(c *gin.Context) (user db.User, err error) {
+func searchUser(c *gin.Context) (user database.User, err error) {
 	tokenString, isExist := c.Get("token")
 	if !isExist {
 		return user, errors.New(language.GetMsg(codes.ERROR_USER_NOT_FOUND))

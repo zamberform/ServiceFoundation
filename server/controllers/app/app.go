@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 	"server/controllers/error"
-	"server/models/db"
+	"server/models/database"
 	"server/models/request"
 	"server/pkg/gdb"
 
@@ -13,7 +13,7 @@ import (
 
 func AppInfo(c *gin.Context) {
 	var commonRequest request.CommonReq
-	var appInfo db.App
+	var appInfo database.App
 	if err := c.ShouldBindJSON(&commonRequest); err != nil {
 		log.Fatalf("req.AppInfo err: %v", err)
 		error.SendErrJSON("error", c)

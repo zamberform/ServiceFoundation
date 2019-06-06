@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"server/controllers/error"
 	"server/middleware/jwt"
-	"server/models/db"
+	"server/models/database"
 	"server/models/request"
 	"server/pkg/gdb"
 	"server/pkg/setting"
@@ -21,14 +21,14 @@ func Login(c *gin.Context) {
 	}
 	uuid := commonRequest.User.Uuid
 	platformId := commonRequest.Platform
-	var user db.User
+	var user database.User
 	var userId uint
 	var userPlatformString string
 	if err := gdb.Instance().Where("uuid = ? And fk_platform_id = ?", uuid, platformId).Find(&user).Error; err == nil {
 		userId = user.ID
 		userPlatformString = user.Pass
 	} else {
-		var newUser db.User
+		var newUser database.User
 		newUser.UUID = uuid
 
 		if err := gdb.Instance().Create(&newUser).Error; err != nil {
