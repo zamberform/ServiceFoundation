@@ -31,3 +31,14 @@ func searchVipUser(userId uint) (user database.User, err error) {
 
 	return user, errors.New(language.GetMsg(codes.ERROR_USER_NOT_FOUND))
 }
+
+func searchAdminUser(userId uint64) (admin database.Admin, err error) {
+	if err := gdb.Instance().Where("id = ?", userId).Find(&admin).Error; err == nil {
+		if len(admin.Email) <= 0 {
+			return admin, errors.New(language.GetMsg(codes.ERROR_ADMIN_INFO_ERROR))
+		}
+		return admin, nil
+	}
+
+	return admin, errors.New(language.GetMsg(codes.ERROR_ADMIN_NOT_FOUND))
+}

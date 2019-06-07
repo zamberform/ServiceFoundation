@@ -35,8 +35,8 @@ func InitRouter(apiPrefix string) *gin.Engine {
 		apis.POST("/quits", user.Withdrawal)
 	}
 
-	cms := r.Group("/cms", auth.AdminRequired)
-	cms.Use(jwt.ApiJwt())
+	cms := r.Group("/cms")
+	cms.Use(jwt.AdminApiJwt(), auth.AdminRequired)
 	{
 		// real user can do the action
 		cms.POST("/users", suaction.AdminAction)

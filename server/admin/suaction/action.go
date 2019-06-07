@@ -9,20 +9,26 @@ import (
 )
 
 func AdminAction(c *gin.Context) {
-	userC, exists := c.Get("user")
-	var user database.User
+	adminC, exists := c.Get("admin")
 	if exists {
-		user = userC.(database.User)
+		admin := adminC.(database.Admin)
 
-		user.Introduce += "action"
-		if err := gdb.Instance().Model(&user).Update("introduce", user.Introduce); err != nil {
+		admin.Name = "JunJun"
+
+		var users []database.User
+		if err := gdb.Instance().Model(&database.User{}).Find(&users).Error; err != nil {
 
 			return
 		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"msg":  "success",
+			"data": users,
+		})
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"msg":  "success",
+		"msg":  "no permission",
 		"data": gin.H{},
 	})
 }
