@@ -1,21 +1,24 @@
 package auth
 
 import (
+	"log"
 	"server/models/database"
-	"server/pkg/gdb"
+	"server/models/request"
 
 	"github.com/gin-gonic/gin"
 )
 
 func SigninRequired(c *gin.Context) {
+	var commonReq request.CommonReq
+	commonInfo, _ := c.Get("common")
+
+	commonReq = commonInfo.(request.CommonReq)
+	userId := commonReq.User.UserId
+
 	var user database.User
 	var err error
-	if user, err = searchUser(c); err != nil {
-
-		return
-	}
-
-	if user.Status <= 0 {
+	if user, err = searchUser(userId); err != nil {
+		log.Fatalf("req.Auth err: %v", err)
 		return
 	}
 
@@ -24,34 +27,23 @@ func SigninRequired(c *gin.Context) {
 }
 
 func AdminRequired(c *gin.Context) {
+
+}
+
+func VipReqired(c *gin.Context) {
+	var commonReq request.CommonReq
+	commonInfo, _ := c.Get("common")
+
+	commonReq = commonInfo.(request.CommonReq)
+	userId := commonReq.User.UserId
+
 	var user database.User
 	var err error
-	if user, err = searchUser(c); err != nil {
-
-		return
-	}
-
-	if user.Status <= 0 {
+	if user, err = searchVipUser(userId); err != nil {
+		log.Fatalf("req.Auth err: %v", err)
 		return
 	}
 
 	c.Set("user", user)
 	c.Next()
-}
-
-func VipReqired(c *gin.Context) {
-	userC, exists := c.Get("user")
-	var user database.User
-	if exists {
-		user = userC.(database.User)
-
-		user.Introduce += "vip"
-		if err := gdb.Instance().Model(&user).Update("introduce", user.Introduce); err != nil {
-
-			return
-		}
-
-		c.Set("user", user)
-		c.Next()
-	}
 }

@@ -30,7 +30,7 @@ func InitRouter(apiPrefix string) *gin.Engine {
 		// real user can do the action
 		apis.POST("/actions", auth.SigninRequired, action.DoAction)
 		// vip user can do
-		apis.POST("/vip", auth.SigninRequired, auth.VipReqired, action.DoAction)
+		apis.POST("/vip", auth.SigninRequired, auth.VipReqired, action.DoVipAction)
 		// real user can quit
 		apis.POST("/quits", user.Withdrawal)
 	}

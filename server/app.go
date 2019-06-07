@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"server/middleware/jwt"
 	"server/pkg/gdb"
 	"server/pkg/gredis"
 	"server/pkg/logging"
@@ -38,6 +39,8 @@ func init() {
 	if err != nil {
 		logging.Fatal("init api server err in redis: %v ", err)
 	}
+
+	jwt.Setup(setting.AppSetting.JwtSecret)
 }
 
 func main() {

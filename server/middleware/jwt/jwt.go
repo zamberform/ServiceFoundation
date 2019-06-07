@@ -1,10 +1,12 @@
 package jwt
 
 import (
+	"log"
+	"net/http"
 	"server/middleware/language"
+	"server/models/request"
 	"server/pkg/codes"
 	"server/utils"
-	"net/http"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -12,6 +14,10 @@ import (
 )
 
 var jwtSecret []byte
+
+func Setup(secret string) {
+	jwtSecret = []byte(secret)
+}
 
 func ParseToken(token string) (*Claims, error) {
 	tokenClaims, err := jwt.ParseWithClaims(token, &Claims{}, func(token *jwt.Token) (interface{}, error) {
@@ -27,12 +33,12 @@ func ParseToken(token string) (*Claims, error) {
 	return nil, err
 }
 
-func GenerateToken(userId, uuid, secret string) (string, error) {
+func GenerateToken(userIdStr, uuid string) (string, error) {
 	nowTime := time.Now()
 	expireTime := nowTime.Add(3 * time.Hour)
 
 	claims := Claims{
-		utils.EncodeMD5(userId),
+		utils.EncodeMD5(userIdStr),
 		utils.EncodeMD5(uuid),
 		jwt.StandardClaims{
 			ExpiresAt: expireTime.Unix(),
@@ -41,7 +47,7 @@ func GenerateToken(userId, uuid, secret string) (string, error) {
 	}
 
 	tokenClaims := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	token, err := tokenClaims.SignedString(secret)
+	token, err := tokenClaims.SignedString(jwtSecret)
 
 	return token, err
 }
@@ -52,12 +58,17 @@ func ApiJwt() gin.HandlerFunc {
 		var data interface{}
 
 		code = codes.SUCCESS
-		token := c.Query("token")
+		var commonRequest request.CommonReq
+		if reqErr := c.ShouldBindJSON(&commonRequest); reqErr != nil {
+			log.Fatalf("req.CommonInfo err: %v", reqErr)
+			return
+		}
+		token := commonRequest.User.Token
 
 		if token == "" {
 			code = codes.INVALID_PARAMS
 		} else {
-			_, err := parseToken(token)
+			_, err := ParseToken(token)
 			if err != nil {
 				switch err.(*jwt.ValidationError).Errors {
 				case jwt.ValidationErrorExpired:
@@ -78,7 +89,7 @@ func ApiJwt() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-
+		c.Set("common", commonRequest)
 		c.Next()
 	}
 }

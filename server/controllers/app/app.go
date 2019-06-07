@@ -20,7 +20,7 @@ func AppInfo(c *gin.Context) {
 		return
 	}
 	platformId := commonRequest.Platform
-	if err := gdb.Instance().Where("platform_type = ?", platformId).Find(&appInfo).Error; err != nil {
+	if err := gdb.Instance().Where("platform_id = ?", platformId).Find(&appInfo).Error; err != nil {
 		log.Fatalf("get.db.AppInfo err: %v", err)
 		error.SendErrJSON("error", c)
 		return
@@ -31,7 +31,7 @@ func AppInfo(c *gin.Context) {
 		"data": gin.H{
 			"name":         appInfo.Name,
 			"version":      appInfo.Version,
-			"platform":     appInfo.PlatformType,
+			"platform":     appInfo.PlatformId,
 			"updateStatus": appInfo.UpdateStatus,
 			"updateURL":    appInfo.URL,
 		},

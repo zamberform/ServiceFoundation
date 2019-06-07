@@ -4,10 +4,10 @@ import "time"
 
 type User struct {
 	ID          uint       `gorm:"primary_key" json:"id"`
-	CreatedAt   time.Time  `json:"createdAt"`
-	UpdatedAt   time.Time  `json:"updatedAt"`
-	DeletedAt   *time.Time `sql:"index" json:"deletedAt"`
-	ActivatedAt *time.Time `json:"activatedAt"`
+	CreatedAt   time.Time  `json:"created_at"`
+	UpdatedAt   time.Time  `json:"updated_at"`
+	DeletedAt   *time.Time `sql:"index" json:"deleted_at"`
+	ActivatedAt *time.Time `json:"activated_at"`
 	Name        string     `json:"name"`
 	UUID        string     `json:"uuid"`
 	Pass        string     `json:"-"`
@@ -15,5 +15,5 @@ type User struct {
 	Introduce   string     `json:"introduce"`
 	AvatarURL   string     `json:"avatarURL"`
 	Status      int        `json:"status"`
-	App         App        `json:"app"`
+	PlatformId  int        `json:"platform_id"`
 }

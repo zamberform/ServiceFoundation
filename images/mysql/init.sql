@@ -75,6 +75,8 @@ CREATE TABLE `user_package_log` (
 DROP TABLE IF EXISTS `package`;
 CREATE TABLE `package` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(250) DEFAULT NULL,
+  `price` int(11) DEFAULT '0',
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NOW(),
   `deleted_at` datetime DEFAULT NULL,

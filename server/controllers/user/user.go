@@ -7,8 +7,10 @@ import (
 	"server/middleware/jwt"
 	"server/models/database"
 	"server/models/request"
+	"server/models/response"
+	"server/pkg/codes"
 	"server/pkg/gdb"
-	"server/pkg/setting"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -19,17 +21,18 @@ func Login(c *gin.Context) {
 		log.Fatalf("req.AppInfo err: %v", err)
 		return
 	}
-	uuid := commonRequest.User.Uuid
-	platformId := commonRequest.Platform
+	userId := commonRequest.User.UserId
+	uuid := commonRequest.User.UUID
+	token := commonRequest.User.Token
 	var user database.User
-	var userId uint
-	var userPlatformString string
-	if err := gdb.Instance().Where("uuid = ? And fk_platform_id = ?", uuid, platformId).Find(&user).Error; err == nil {
+	if err := gdb.Instance().Where("id = ?", userId).Find(&user).Error; err == nil {
 		userId = user.ID
-		userPlatformString = user.Pass
 	} else {
 		var newUser database.User
 		newUser.UUID = uuid
+		newUser.CreatedAt = time.Now()
+		newUser.UpdatedAt = time.Now()
+		newUser.PlatformId = commonRequest.Platform
 
 		if err := gdb.Instance().Create(&newUser).Error; err != nil {
 			log.Fatalf("get.db.UserLoging err: %v", err)
@@ -38,28 +41,77 @@ func Login(c *gin.Context) {
 		}
 
 		userId = user.ID
-		userPlatformString = user.UUID
 	}
 
-	token, err := jwt.GenerateToken(string(userId), userPlatformString, setting.AppSetting.JwtSecret)
-	if err != nil {
-		log.Fatalf("get.db.UserLoging err: %v", err)
-		error.SendErrJSON("error", c)
-		return
+	//check token is enable
+	if _, err := jwt.ParseToken(token); err != nil {
+		token, err = jwt.GenerateToken(string(userId), uuid)
+		if err != nil {
+			log.Fatalf("get.db.UserLoging err: %v", err)
+			error.SendErrJSON("error", c)
+			return
+		}
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"msg": "success",
-		"data": gin.H{
-			"token": token,
-		},
-	})
+	var response response.CommonRes
+	response.Msg = "success"
+	response.Code = codes.SUCCESS
+
+	response.User.Token = token
+	c.JSON(http.StatusOK, response)
 }
 
 func SignIn(c *gin.Context) {
+	var commonReq request.CommonReq
+	commonInfo, _ := c.Get("common")
 
+	commonReq = commonInfo.(request.CommonReq)
+
+	userId := commonReq.User.UserId
+	token := commonReq.User.Token
+	var user database.User
+	if err := gdb.Instance().Where("id = ?", userId).Find(&user).Error; err == nil {
+		userId = user.ID
+	}
+
+	user.Introduce = "sign_in"
+	user.Email = "brightzamber@gmail.com"
+	if err := gdb.Instance().Model(&database.User{}).Where("id = ?", userId).Updates(user).Error; err != nil {
+		log.Fatalf("get.db.Signin err: %v", err)
+		return
+	}
+
+	var response response.CommonRes
+	response.Msg = "success"
+	response.Code = codes.SUCCESS
+
+	response.User.Token = token
+	c.JSON(http.StatusOK, response)
 }
 
 func Withdrawal(c *gin.Context) {
+	var commonReq request.CommonReq
+	commonInfo, _ := c.Get("common")
 
+	commonReq = commonInfo.(request.CommonReq)
+
+	userId := commonReq.User.UserId
+	token := commonReq.User.Token
+	var user database.User
+	if err := gdb.Instance().Where("id = ?", userId).Find(&user).Error; err == nil {
+		userId = user.ID
+	}
+
+	user.Introduce = "quit"
+	if err := gdb.Instance().Model(&database.User{}).Where("id = ?", userId).Updates(user).Error; err != nil {
+		log.Fatalf("get.db.Signin err: %v", err)
+		return
+	}
+
+	var response response.CommonRes
+	response.Msg = "success"
+	response.Code = codes.SUCCESS
+
+	response.User.Token = token
+	c.JSON(http.StatusOK, response)
 }

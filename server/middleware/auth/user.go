@@ -2,28 +2,30 @@ package auth
 
 import (
 	"errors"
-	"server/middleware/jwt"
 	"server/middleware/language"
 	"server/models/database"
 	"server/pkg/codes"
 	"server/pkg/gdb"
-
-	"github.com/gin-gonic/gin"
 )
 
-func searchUser(c *gin.Context) (user database.User, err error) {
-	tokenString, isExist := c.Get("token")
-	if !isExist {
-		return user, errors.New(language.GetMsg(codes.ERROR_USER_NOT_FOUND))
-	}
-	claims, tokenErr := jwt.ParseToken(tokenString.(string))
-
-	if tokenErr != nil {
-
+func searchUser(userId uint) (user database.User, err error) {
+	if err := gdb.Instance().Where("id = ?", userId).Find(&user).Error; err == nil {
+		if len(user.Email) <= 0 {
+			return user, errors.New(language.GetMsg(codes.ERROR_USER_NOT_SIGNIN))
+		}
+		return user, nil
 	}
 
-	userID := claims.UserId
-	if err := gdb.Instance().Where("id = ?", userID).Find(&user).Error; err == nil {
+	return user, errors.New(language.GetMsg(codes.ERROR_USER_NOT_FOUND))
+}
+
+func searchVipUser(userId uint) (user database.User, err error) {
+	if err := gdb.Instance().Where("id = ?", userId).Find(&user).Error; err == nil {
+		if len(user.Email) <= 0 {
+			return user, errors.New(language.GetMsg(codes.ERROR_USER_NOT_SIGNIN))
+		} else if user.Status <= 1 {
+			return user, errors.New(language.GetMsg(codes.ERROR_USER_NOT_VIP))
+		}
 		return user, nil
 	}
 

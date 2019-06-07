@@ -1,6 +1,7 @@
 package request
 
 type User struct {
-	Name string `json:"name"`
-	Uuid string `json:"uuid"`
+	UserId uint   `json:"id"`
+	UUID   string `json:"uuid"`
+	Token  string `json:"token"`
 }
