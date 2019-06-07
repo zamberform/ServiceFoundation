@@ -9,14 +9,14 @@ services:
     depends_on:
       - mysql
       - redis
-    ports:
-      - 3000:3000
     environment:
       GO111MODULE: "on"
   nginx:
     build:
-      context: ./images/nginx
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: images/nginx/Dockerfile
+    volumes: 
+      - ./images/nginx/conf/:/etc/nginx/conf.d/
     depends_on:
       - gin
     ports:
