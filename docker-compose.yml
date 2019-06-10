@@ -11,6 +11,17 @@ services:
       - redis
     environment:
       GO111MODULE: "on"
+  web:
+    build:
+      context: .
+      dockerfile: images/vue/Dockerfile
+    command: "npm run dev"
+    volumes:
+      - ./web:/app
+    ports:
+      - 9528:80
+    depends_on:
+      - gin
   nginx:
     build:
       context: .
