@@ -40,7 +40,7 @@ export const constantRoutes = [
     path: '/user',
     component: Layout,
     redirect: '/user/list',
-    name: 'Example',
+    name: 'Example1',
     meta: { title: 'Example', icon: 'example' },
     children: [
       {
@@ -62,7 +62,7 @@ export const constantRoutes = [
     path: '/user',
     component: Layout,
     redirect: '/user/list',
-    name: 'Example',
+    name: 'Example2',
     meta: { title: 'Example', icon: 'example' },
     children: [
       {
