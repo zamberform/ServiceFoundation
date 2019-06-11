@@ -19,6 +19,15 @@ export default {
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
     ]
   },
+  proxy: [
+    [
+      '/api', 
+      { 
+        target: 'http://gin:3000',
+        pathRewrite: { '^/api' : '/' }
+      }
+    ]
+  ],
   /*
   ** Customize the progress-bar color
   */
