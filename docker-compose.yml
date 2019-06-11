@@ -15,11 +15,8 @@ services:
     build:
       context: .
       dockerfile: images/vue/Dockerfile
-    command: "npm run dev"
     volumes:
       - ./web:/app
-    ports:
-      - 9528:80
     depends_on:
       - gin
   nginx:
@@ -30,6 +27,7 @@ services:
       - ./images/nginx/conf/:/etc/nginx/conf.d/
     depends_on:
       - gin
+      - web
     ports:
       - 80:80
     environment:

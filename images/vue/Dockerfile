@@ -3,9 +3,6 @@ WORKDIR /app
 
 COPY web .
 
-RUN apk update && \
-	npm install -g npm && \
-    npm install && \
-    npm rebuild node-sass
+RUN npm i -g yarn
 
-CMD ["/bin/sh"]
+CMD yarn install && yarn run dev
