@@ -11,12 +11,12 @@ services:
       - redis
     environment:
       GO111MODULE: "on"
-  web:
+  cms:
     build:
       context: .
-      dockerfile: images/vue/Dockerfile
+      dockerfile: images/cms/Dockerfile
     volumes:
-      - ./web:/app
+      - ./cms:/app
     depends_on:
       - gin
   nginx:
