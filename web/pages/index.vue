@@ -1,68 +1,101 @@
 <template>
-  <div class="container">
-    <div>
-      <logo />
-      <h1 class="title">
-        web
-      </h1>
-      <h2 class="subtitle">
-        My swell Nuxt.js project
-      </h2>
-      <div class="links">
-        <a
-          href="https://nuxtjs.org/"
-          target="_blank"
-          class="button--green"
-        >Documentation</a>
-        <a
-          href="https://github.com/nuxt/nuxt.js"
-          target="_blank"
-          class="button--grey"
-        >GitHub</a>
-      </div>
-    </div>
-  </div>
+<div>
+	<nav-header :active="active"></nav-header>
+	<el-row type="flex" justify="center" class="content-blog">
+		<el-col :span="10">
+			<nuxt-link  v-for="item in list" :key="item.title" :to="{name:'article-id',params:{id:item.id}}" class="box-href">
+				<el-card class="box-card" shadow="hover">
+					<h2 class="box-title">{{item.title}}</h2>
+					<div class="box-icon">
+						<span><i class="el-icon-date"></i>&nbsp;{{item.time}}</span>
+					</div>
+					<div class="box-content">{{item.des}}</div>
+				</el-card>
+			</nuxt-link>
+			<el-pagination class="pagination" @current-change="pagination" background layout="prev, pager, next" :page-size="5" :total="count" v-show="count >= 5"></el-pagination>
+		</el-col>
+    <el-col :span="5" :offset="1">
+			<el-card class="about">
+				<div class="about-title">About Me</div>
+				<div class="about-name">
+					<img src="~/static/images/name.png" alt="brianlee">
+				</div>
+				<div class="about-content">
+					<p>名前：JunJun</p>
+
+					<p>Github：Zamberform</p>
+
+					<p>email：brightzamber@gmail.com</p>
+				</div>
+			</el-card>
+			<el-card class="article">
+				<div class="article-title">最近</div>
+				<hr>
+				<nuxt-link v-for="item in lately" :key="item.id" :to="{name:'article-id',params:{id:item.id}}" class="article-link">
+					<i class="el-icon-edit"></i>&nbsp;&nbsp;{{item.title}}
+				</nuxt-link>
+			</el-card>
+			<el-card class="link">
+				<div class="link-title">その他</div>
+				<hr>
+				<div class="link-content">
+					<a href="/" target="_blank" class="link-url">Product1</a>
+					<a href="/" target="_blank" class="link-url">Product2</a>
+				</div>
+			</el-card>
+		</el-col>
+	</el-row>
+	<nav-footer />
+</div>
 </template>
 
 <script>
-import Logo from '~/components/Logo.vue'
+import NavHeader from '~/components/NavHeader.vue'
+import NavFooter from '~/components/Footer.vue'
 
 export default {
-  components: {
-    Logo
-  }
+	data() {
+		return {
+			active:'index'
+		}
+  },
+  
+	async asyncData({app}) {
+    let json = {page:1,pagesize:5}
+    let data = await app.$axios.$get(`/api/article/getFrontArticle`,{params:json});
+    let {list,count} = data;
+    let lately = list.slice(0,4);
+
+		return {list,count,lately}
+  },
+	methods: {
+		pagination(page) {
+			let json = {page,pagesize:5}
+			this.$axios.$get(`/api/article/getFrontArticle`,{params:json}).then(res=>{
+				let {error,count,list} = res.data;
+        this.list =list;
+        
+			});
+		}
+  },
+  
+	components: {
+		NavHeader,
+		NavFooter
+	},
+	head() {
+		return {
+			title:'Nuxt Blog Sample',
+			meta:[
+				{hid:'description',name:'description',content:'A blog system frontend made by nuxt.js'},
+				{hid:'keywords',name:'keywords',content:'blog,nuxt,nuxtjs,vue,vuejs'},
+				{hid:'author',content:'zamberform'}
+			]
+		}
+	}
 }
 </script>
 
-<style>
-.container {
-  margin: 0 auto;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-
-.title {
-  font-family: 'Quicksand', 'Source Sans Pro', -apple-system, BlinkMacSystemFont,
-    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  display: block;
-  font-weight: 300;
-  font-size: 100px;
-  color: #35495e;
-  letter-spacing: 1px;
-}
-
-.subtitle {
-  font-weight: 300;
-  font-size: 42px;
-  color: #526488;
-  word-spacing: 5px;
-  padding-bottom: 15px;
-}
-
-.links {
-  padding-top: 15px;
-}
+<style lang="less">
+    @import './../assets/less/content.less';
 </style>

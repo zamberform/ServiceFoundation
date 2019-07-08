@@ -1,9 +1,5 @@
 
 export default {
-  server: {
-    port: 8000, // default: 3000
-    host: '0.0.0.0', // default: localhost,
-  },
   mode: 'universal',
   /*
   ** Headers of the page
@@ -19,15 +15,6 @@ export default {
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
     ]
   },
-  proxy: [
-    [
-      '/api', 
-      { 
-        target: 'http://gin:3000',
-        pathRewrite: { '^/api' : '/' }
-      }
-    ]
-  ],
   /*
   ** Customize the progress-bar color
   */
@@ -36,25 +23,42 @@ export default {
   ** Global CSS
   */
   css: [
+    'element-ui/lib/theme-chalk/index.css',
+    '~assets/css/common.css',
+    '~assets/css/markdown.css'
   ],
   /*
   ** Plugins to load before mounting the App
   */
   plugins: [
+    '@/plugins/element-ui',
+    '@/plugins/axios'
   ],
   /*
   ** Nuxt.js modules
   */
   modules: [
+    '@nuxtjs/axios',
+    '@nuxtjs/proxy'
+  ],
+  loader:[
+    {
+        test:/\.less$/,
+        loaders:'style-loader!css-loader!less-loader'
+    }
   ],
   /*
   ** Build configuration
   */
   build: {
+    transpile: [/^element-ui/],
     /*
     ** You can extend webpack config here
     */
     extend(config, ctx) {
     }
+  },
+  proxy: {
+    '/api': 'http://localhost:8000',
   }
 }
