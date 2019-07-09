@@ -10,13 +10,26 @@
     </el-row>
     <el-row type="flex" justify="center">
       <el-col :span="14" class="detail_content">
-        <div v-show="!content">データない</div>
+        <div v-show="!content">データがない</div>
         <div v-html="content" class="md markdown-body"></div>
       </el-col>
     </el-row>
     <el-row type="flex" justify="center">
       <el-col :span="14">
         <h2 style="color:#3D5064;border-top:1px dashed #3D5064;padding-top:15px;margin-top:30px;">コメント：</h2>
+      </el-col>
+    </el-row>
+    <el-row type="flex" justify="center" class="detail_content">
+      <el-col :span="14">
+        <el-card class="box-card" v-show="commentList.length !== 0" v-for="(item, index) in commentList" :key="index">
+          <div slot="header" class="clearfix">
+            <span style="font-weight: bold;">{{item.username}} <el-tag type="success" v-show="author.includes(item.username)">が</el-tag> コメント：</span>
+            <span style="float: right; padding: 3px 0;font-weight: bold;"><Time :time="item.time" :interval="1" /></span>
+          </div>
+          <div>
+            {{item.content}}
+          </div>
+        </el-card>
       </el-col>
     </el-row>
     <el-row type="flex" justify="center">
@@ -28,10 +41,7 @@
           <el-form-item label="メール" prop="email">
             <el-input type="text" v-model="ruleForm.email" autocomplete="off" placeholder="メールを入力してください"></el-input>
           </el-form-item>
-          <el-form-item label="パスワード" prop="pass" v-show="authorStatus">
-            <el-input type="password" v-model="ruleForm.pass" autocomplete="off" placeholder="パスワード"></el-input>
-          </el-form-item>
-          <el-form-item label="コンテント" prop="content">
+          <el-form-item label="コメント" prop="content">
             <el-input type="textarea" :rows="8" v-model="ruleForm.content" autocomplete="off"></el-input>
           </el-form-item>
           <el-form-item>
@@ -41,26 +51,17 @@
         </el-form>
       </el-col>
     </el-row>
-    <el-row type="flex" justify="center" class="detail_content">
-      <el-col :span="14">
-        <el-card class="box-card" v-show="commentList.length !== 0" v-for="(item, index) in commentList" :key="index">
-          <div slot="header" class="clearfix">
-            <span style="font-weight: bold;">{{item.username}} <el-tag type="success" v-show="author.includes(item.username)">作者</el-tag> 说：</span>
-            <span style="float: right; padding: 3px 0;font-weight: bold;"><Time :time="item.time" :interval="1" /></span>
-          </div>
-          <div>
-            {{item.content}}
-          </div>
-        </el-card>
-        <!--<el-pagination class="pagination" @current-change="pagination" background layout="prev, pager, next" :page-size="4" :total="count" v-show="count > 4"></el-pagination>-->
-      </el-col>
-    </el-row>
   </div>
 </template>
 
 <script>
-import NavHeader from '~/components/NavHeader.vue';
-import Time from '~/components/Time.vue';
+
+var qs = require('qs');
+
+import NavHeader from '~/components/NavHeader.vue'
+import Time from '~/components/Time.vue'
+import { log } from 'util';
+
 export default {
 	data() {
     var checkUsername = (rule, value, callback) => {
@@ -96,8 +97,7 @@ export default {
       ruleForm: {
         username: '',
         email: '',
-        content: '',
-        pass: ''
+        content: ''
       },
       rules: {
         username: [
@@ -126,11 +126,11 @@ export default {
     head() {
 		return {
 			title:this.title,
-      meta:[
-				{hid:'description',name:'description',content:`${this.des}`},
-				{hid:'author',content:'brian'}
-			]
-		}
+            meta:[
+                {hid:'description',name:'description',content:`${this.des}`},
+                {hid:'author',content:'zamberform'}
+            ]
+            }
 	},
     components:{
         NavHeader,
@@ -141,66 +141,64 @@ export default {
     },
     methods: {
         submitForm(formName) {
-        this.$refs[formName].validate((valid) => {
-            if (valid) {
-                let json = Object.assign({}, {comment: Object.assign(this.ruleForm, {time: new Date().getTime()}), id: this.$route.params.id})
-                this.commentsSubmit(json, formName)
-            } else {
-                this.$notify({
-                    title: '失敗',
-                    message: '内容を入れてください',
-                    type: 'error'
-                });
-                return false;
+            this.$refs[formName].validate((valid) => {
+                if (valid) {
+                    let json = Object.assign({}, {comment: Object.assign(this.ruleForm, {time: new Date().getTime()}), id: this.$route.params.id})
+                    this.commentsSubmit(json, formName)
+                } else {
+                    this.$notify({
+                        title: '失敗',
+                        message: '内容を入れてください',
+                        type: 'error'
+                    });
+                    return false;
+                }
+            });
+        },
+        resetForm(formName) {
+            this.$refs[formName].resetFields()
+        },
+        async commentsSubmit (json, formName) {
+            try {
+                let {status} = await this.$axios.$post(`/api/comment`, json)
+                if (status == 0) {
+                    this.$refs[formName].resetFields()
+                    this.$notify({
+                        title: '成功',
+                        message: 'コメント確認してください',
+                        type: 'success'
+                    });
+                    this.commentLists(this.$route.params.id)
+                } else {
+                    this.$notify({
+                        title: '失敗',
+                        message: 'コメント失敗',
+                        type: 'error'
+                    });
+                    return false
+                }
+            } catch (error) {
+                // handle error
+                return false
             }
-        });
-    },
-    resetForm(formName) {
-      this.$refs[formName].resetFields()
-      this.$captch.reset()
-    },
-    async commentsSubmit (json, formName) {
-      try {
-        let {data} = await this.$axios.$post(`/api/comment`, json)
-        if (Object.is(data.status, '0000')) {
-          this.$refs[formName].resetFields()
-          this.$notify({
-            title: '成功',
-            message: 'コメント確認してください',
-            type: 'success'
-          });
-          this.$captch.reset()
-          this.commentLists(this.$route.params.id)
-        } else {
-          this.$notify({
-            title: '失敗',
-            message: data.msg,
-            type: 'error'
-          });
-          return false;
-        }
-      } catch (error) {
-        // handle error
-      }
-    },
-    async commentLists (id) {
-      try {
-        let {data: {count, result}} = await this.$axios.$post(`/api/articleComments`, {id})
-        let {data: {data}} = await this.$axios.$post(`/api/comment/config/list`, {id})
-        this.count = count
-        this.commentList = result.comment.reverse()
-        this.author = data.author
-      } catch (error) {
-        // handle error
-      }
-    },
-    pagination(page) {
-      console.log(page)
-    },
-    usernameChange (val) {
-      this.authorStatus = this.author.includes(val)
-      console.log(`status:${this.authorStatus}`)
-    },
+        },
+        async commentLists (id) {
+            try {
+                let {count, comments} = await this.$axios.$post(`/api/articleComments`, qs.stringify({ 'id': id }))
+                let {author} = await this.$axios.$post(`/api/comment/config/list`, qs.stringify({ 'id': id }))
+                this.count = count
+
+                this.commentList = comments.reverse()
+                this.author = author
+            } catch (error) {
+                // handle error
+                console.log(error)
+            }
+        },
+        usernameChange (val) {
+            this.authorStatus = this.author.includes(val)
+            console.log(`status:${this.authorStatus}`)
+        },
   }
 }
 </script>

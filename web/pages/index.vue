@@ -22,10 +22,8 @@
 				</div>
 				<div class="about-content">
 					<p>名前：JunJun</p>
-
 					<p>Github：Zamberform</p>
-
-					<p>email：brightzamber@gmail.com</p>
+					<p>メール：brightzamber@gmail.com</p>
 				</div>
 			</el-card>
 			<el-card class="article">
@@ -41,6 +39,8 @@
 				<div class="link-content">
 					<a href="/" target="_blank" class="link-url">Product1</a>
 					<a href="/" target="_blank" class="link-url">Product2</a>
+          <a href="/" target="_blank" class="link-url">Product3</a>
+					<a href="/" target="_blank" class="link-url">Product4</a>
 				</div>
 			</el-card>
 		</el-col>
