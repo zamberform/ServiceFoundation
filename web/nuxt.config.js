@@ -41,12 +41,6 @@ export default {
     '@nuxtjs/axios',
     '@nuxtjs/proxy'
   ],
-  loader:[
-    {
-        test:/\.less$/,
-        loaders:'style-loader!css-loader!less-loader'
-    }
-  ],
   /*
   ** Build configuration
   */
@@ -56,6 +50,15 @@ export default {
     ** You can extend webpack config here
     */
     extend(config, ctx) {
+    },
+    loaders: {
+      less: {
+        javascriptEnabled: true,
+        modifyVars: {
+          'primary-color': 'rgba(222, 12, 101, 1.0)',
+          'component-background': '#ffffff',
+        }
+      }
     }
   },
   proxy: {

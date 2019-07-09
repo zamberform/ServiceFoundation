@@ -1,7 +1,6 @@
 <template>
 <div>
 	<nav-header :active="active"></nav-header>
-	<!-- 并非采用后台动态添加，后期增加动态修改 -->
 	<el-row type="flex" justify="center" class="about_content">
 		<el-col :span="15" class="about">
 			<el-card class="box-card">

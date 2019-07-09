@@ -5,16 +5,12 @@
 		<el-col :span="20">
 			<nuxt-link :to="{name:'index'}" class="logo">Nuxt Sample Blog</nuxt-link>
 			<el-menu :default-active="active" class="el-menu-demo navbar" active-text-color="#41b883" text-color="#fff"  mode="horizontal" @select="handleSelect">
-				<el-menu-item index="index">リスト</el-menu-item>
-				<el-menu-item index="version">タイムライン</el-menu-item>
-				<el-menu-item index="about">About</el-menu-item>
-                <el-menu-item index="login">ログイン</el-menu-item>
+				<el-menu-item index="index">ホーム</el-menu-item>
                 <el-menu-item index="limit">会員限定</el-menu-item>
 			</el-menu>
 		</el-col>
 	</el-row>
 	</div>
-	<img src="~/static/images/banner.jpg" alt="banner" class="banner_img">
 </div>
 </template>
 
