@@ -13,9 +13,18 @@ export const mutations = {
     state.token = token
   },
   limit(state, limit) {
-    state.limit = limit
+    state.isLimit = limit
   },
   setLoginState(state, isLogin) {
     state.isLogin = isLogin
+  }
+}
+
+export const getters = {
+  userName(state) {
+    return state.userName
+  },
+  isLimit(state) {
+    return state.isLimit
   }
 }

@@ -32,8 +32,12 @@ export default {
   */
   plugins: [
     '@/plugins/element-ui',
-    '@/plugins/axios'
+    '@/plugins/axios',
+    { src: "~plugins/persistedstate.js", ssr: false }
   ],
+  router: {
+    middleware: ['auth']
+  },
   /*
   ** Nuxt.js modules
   */

@@ -143,7 +143,7 @@ export default {
                     message: 'サイン成功、メールを確認してください',
                     type: 'success'
                   })
-                  this.$router.push('/user/signin')
+                  this.$router.push('/login')
                 } else {
                   this.$message({
                     showClose: true,

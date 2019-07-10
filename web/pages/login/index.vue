@@ -1,8 +1,9 @@
 <template>
 <div>
 	<nav-header :active="active"></nav-header>
-    <div v-if="userName == ''">
-    {{ userName }}
+    <div v-if="$store.getters['userName']">
+        <div>{{ $store.getters['userName'] }}</div>
+        <p><el-button @click="logout">ログアウト</el-button></p>
     </div>
     <div v-else>
     <el-row type="flex" justify="center" class="about_content">
@@ -33,9 +34,7 @@
 import NavHeader from '@/components/NavHeader.vue'
 export default {
 	data(){
-        
-        return {
-            userName: this.$store.state.userName, 
+        return { 
             active:'login',
             ruleForm:{username:'',password:''},
             rules:{
@@ -67,7 +66,12 @@ export default {
                         this.$store.commit('setLoginState', true)
                         this.$store.commit('token', data.user.token)
                         this.$store.commit('user', data.user.name)
-                        this.$store.commit('limit', data.user.isLimit)
+                        this.$store.commit('limit', data.user.limit)
+                        this.$notify({
+                            title: '成功',
+                            message: data.user.name + 'おかえり',
+                            type: 'success'
+                        });
                     }
                 }else{
                     return false
@@ -76,6 +80,21 @@ export default {
         },
         cancel(){
             window.location.href = '/'
+        },
+        async logout(){
+            let {data} =  await this.$axios.post('/api/user/signout')        
+            if(data.status == 0){
+                this.$store.commit('setLoginState', false)
+                this.$store.commit('token', null)
+                this.$store.commit('user', null)
+                this.$store.commit('limit', false)
+                this.$router.push('/')
+                this.$notify({
+                    title: '成功',
+                    message: 'ログアウトした',
+                    type: 'success'
+                });
+            }
         }
     }
 }

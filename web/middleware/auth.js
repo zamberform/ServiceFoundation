@@ -1,20 +1,24 @@
-export default ({ store, route, redirect }) => {
-  if (store.isLogin) {
-    const token = store.userToken
-    this.$axios.post('/api/auth', {
-      token
+
+export default (ctx) => {
+  const urlRequiresAuth = /^\/limit(\/|$)/.test(ctx.route.fullPath)
+  if (urlRequiresAuth) {
+    const userIsLoggedIn = ctx.store.state.userName
+    const token = ctx.store.state.userToken
+    console.log(token)
+    ctx.$axios.$post('api/auth', {
+      token: token
     }).then(res => {
-      const { data } = res
-      // todo: token reset有り得る
-      if (!data.error_text && data.checks[0].status === 'VALID') {
-        redirect('/secret')
-      } else {
-        redirect('/')
+      const data = res
+      if (data.status === 1) {
+        ctx.store.commit('token', data.new_token)
+      } else if (data.status > 10) {
+        ctx.redirect('/error')
       }
-      // todo: end
-      redirect('/')
     }).catch(err => console.log(err))
-  } else {
-    redirect('/')
+  
+    if (!userIsLoggedIn) {
+      return ctx.redirect('/login')
+    }
   }
+  return Promise.resolve()
 }

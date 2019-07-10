@@ -1,8 +1,11 @@
 <template>
   <div>
     <limit-header :active="active"></limit-header>
-    <div v-if="userName == '' || !isLimit">
-        <el-row type="flex" justify="center" class="limit_content">
+    <div v-if="$store.getters['userName'] && $store.getters['isLimit']">
+        <img src="~/static/images/limit.jpg" alt="banner" class="limit_img">
+    </div>
+    <div v-else>
+	    <el-row type="flex" justify="center" class="limit_content">
 		<el-col :span="15" class="limit">
             <br>
             <br>
@@ -13,9 +16,6 @@
 			<p>今すぐ<nuxt-link to="/login">ログイン</nuxt-link></p>
 		</el-col>
 	    </el-row>
-    </div>
-    <div v-else>
-	    <img src="~/static/images/limit.jpg" alt="banner" class="limit_img">
     </div>
     <nav-footer />
   </div>
@@ -30,8 +30,6 @@ export default {
     layout: 'limit',
 	data() {
 		return {
-            userName: this.$store.state.userName, 
-            isLimit: this.$store.state.isLimit, 
 			active:'limit',
 		}
     },
