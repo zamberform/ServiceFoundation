@@ -15,10 +15,10 @@ export default (ctx) => {
         ctx.redirect('/error')
       }
     }).catch(err => console.log(err))
-  
     if (!userIsLoggedIn) {
       return ctx.redirect('/login')
     }
   }
+
   return Promise.resolve()
 }
