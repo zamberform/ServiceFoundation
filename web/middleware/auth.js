@@ -1,4 +1,3 @@
-
 export default (ctx) => {
   const urlRequiresAuth = /^\/limit(\/|$)/.test(ctx.route.fullPath)
   if (urlRequiresAuth) {
