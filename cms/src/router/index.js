@@ -54,7 +54,6 @@ export const constantRoutes = [
   {
     path: '/user',
     component: Layout,
-    redirect: '/user/list',
     name: 'User',
     meta: { title: 'ユーザー', icon: 'user' },
     children: [
@@ -75,7 +74,6 @@ export const constantRoutes = [
   {
     path: '/article',
     component: Layout,
-    redirect: '/article/list',
     name: 'Articles',
     meta: { title: '文書', icon: 'documentation' },
     children: [
@@ -96,7 +94,6 @@ export const constantRoutes = [
   {
     path: '/tag',
     component: Layout,
-    redirect: '/tag/list',
     name: 'Tags',
     meta: { title: 'タグ', icon: 'list' },
     children: [
