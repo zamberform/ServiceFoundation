@@ -5,7 +5,7 @@
         <el-input v-model="form.name" />
       </el-form-item>
       <el-form-item label="タグ">
-        <el-select v-model="form.region" placeholder="please select your tag">
+        <el-select v-model="form.tag" placeholder="please select your tag">
           <el-option label="Zone one" value="Tag1" />
           <el-option label="Zone two" value="Tag2" />
         </el-select>
@@ -24,7 +24,7 @@
       </el-form-item>
       <el-form-item label="内容">
         <div class="editor-container">
-          <markdown-editor v-model="content1" height="300px" />
+          <markdown-editor v-model="form.content" height="300px" />
         </div>
       </el-form-item>
       <el-form-item>
@@ -44,15 +44,17 @@ export default {
     return {
       form: {
         name: '',
-        region: '',
+        tag: '',
         date1: '',
         date2: '',
         delivery: false,
-        type: [],
-        resource: '',
-        desc: ''
+        content: ''
       }
     }
+  },
+  created() {
+    // const route_id = this.$route.params.id
+    this.form.name = 'test'
   },
   methods: {
     onSubmit() {
