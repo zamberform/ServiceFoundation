@@ -54,17 +54,18 @@ export const constantRoutes = [
   {
     path: '/user',
     component: Layout,
+    redirect: '/user/list',
     name: 'User',
     meta: { title: 'ユーザー', icon: 'user' },
     children: [
       {
-        path: 'user',
+        path: 'list',
         name: 'List',
         component: () => import('@/views/user/list'),
         meta: { title: 'リスト', icon: 'table' }
       },
       {
-        path: 'user',
+        path: 'editor',
         name: 'Editor',
         component: () => import('@/views/user/editor'),
         meta: { title: '編集', icon: 'edit' }
@@ -74,6 +75,7 @@ export const constantRoutes = [
   {
     path: '/article',
     component: Layout,
+    redirect: '/article/list',
     name: 'Articles',
     meta: { title: '文書', icon: 'documentation' },
     children: [
@@ -84,7 +86,7 @@ export const constantRoutes = [
         meta: { title: 'リスト', icon: 'table' }
       },
       {
-        path: 'article',
+        path: 'editor',
         name: 'Editor',
         component: () => import('@/views/article/editor'),
         meta: { title: '編集', icon: 'edit' }
@@ -94,6 +96,7 @@ export const constantRoutes = [
   {
     path: '/tag',
     component: Layout,
+    redirect: '/tag/list',
     name: 'Tags',
     meta: { title: 'タグ', icon: 'list' },
     children: [
@@ -104,7 +107,7 @@ export const constantRoutes = [
         meta: { title: 'リスト', icon: 'table' }
       },
       {
-        path: 'tag',
+        path: 'editor',
         name: 'Editor',
         component: () => import('@/views/tag/editor'),
         meta: { title: '編集', icon: 'edit' }
@@ -114,6 +117,7 @@ export const constantRoutes = [
   {
     path: '/comment',
     component: Layout,
+    redirect: '/comment/list',
     children: [
       {
         path: 'comment',

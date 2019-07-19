@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import { getList } from '@/api/table'
+import { getList } from '@/api/user'
 
 export default {
   filters: {
@@ -70,7 +70,7 @@ export default {
     fetchData() {
       this.listLoading = true
       getList().then(response => {
-        this.list = response.data.items
+        this.list = response.items
         this.listLoading = false
       })
     }

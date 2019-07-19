@@ -22,3 +22,11 @@ export function logout() {
     method: 'post'
   })
 }
+
+export function getList(token) {
+  return request({
+    url: '/user/list',
+    method: 'get',
+    params: { token }
+  })
+}
