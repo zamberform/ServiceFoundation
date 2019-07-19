@@ -8,9 +8,9 @@
       fit
       highlight-current-row
     >
-      <el-table-column align="center" label="ID" width="80">
+      <el-table-column align="center" label="ID">
         <template slot-scope="scope">
-          <span>{{ scope.row.index }}</span>
+          <span>{{ scope.row.title }}</span>
         </template>
       </el-table-column>
 
@@ -33,7 +33,25 @@
           </el-tag>
         </template>
       </el-table-column>
+
+      <el-table-column label="Actions" align="center" width="300" class-name="small-padding fixed-width">
+        <template slot-scope="{row}">
+          <el-button size="mini" type="success" @click="handleModifyStatus(row,'published')">
+            Publish
+          </el-button>
+          <el-button size="mini" type="danger" @click="deleteArticle(row)">
+            Delete
+          </el-button>
+        </template>
+      </el-table-column>
     </el-table>
+
+    <el-dialog :visible.sync="dialogConfirmVisible" title="削除確認">
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="dialogConfirmVisible = false">Confirm</el-button>
+        <el-button type="block" @click="dialogConfirmVisible = false">Cancel</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -54,7 +72,8 @@ export default {
   data() {
     return {
       list: null,
-      listLoading: true
+      listLoading: true,
+      dialogConfirmVisible: false
     }
   },
   created() {
@@ -67,6 +86,16 @@ export default {
         this.list = response.items
         this.listLoading = false
       })
+    },
+    handleModifyStatus(row, status) {
+      this.$message({
+        message: '操作Success',
+        type: 'success'
+      })
+      row.status = status
+    },
+    deleteArticle(row) {
+      this.dialogConfirmVisible = true
     }
   }
 }

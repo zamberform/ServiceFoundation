@@ -104,20 +104,12 @@ export const constantRoutes = [
     path: '/tag',
     component: Layout,
     redirect: '/tag/list',
-    name: 'Tags',
-    meta: { title: 'タグ', icon: 'list' },
     children: [
       {
         path: 'tag',
         name: 'Tags',
         component: () => import('@/views/tag/list'),
-        meta: { title: 'リスト', icon: 'table' }
-      },
-      {
-        path: 'editor',
-        name: 'TagEditor',
-        component: () => import('@/views/tag/editor'),
-        meta: { title: '編集', icon: 'edit' }
+        meta: { title: 'タグ', icon: 'table' }
       }
     ]
   },
