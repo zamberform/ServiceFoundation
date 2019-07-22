@@ -10,6 +10,7 @@
 						<span><i class="el-icon-date"></i>&nbsp;{{item.time}}</span>
 					</div>
 					<div class="box-content">{{item.des}}</div>
+					<div class="box-content">{{item.tag}}</div>
 				</el-card>
 			</nuxt-link>
 			<el-pagination class="pagination" @current-change="pagination" background layout="prev, pager, next" :page-size="5" :total="count" v-show="count >= 5"></el-pagination>

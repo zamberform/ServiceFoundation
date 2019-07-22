@@ -5,6 +5,7 @@
       <el-col :span="14" class="detail_title">
           <div>{{title}}</div>
           <div class="time">更新時間：{{time}}&nbsp;&nbsp;&nbsp;&nbsp;</div>
+          <div class="time">タグ：{{tag}}&nbsp;&nbsp;&nbsp;&nbsp;</div>
       </el-col>
 
     </el-row>
@@ -120,8 +121,8 @@ export default {
 		let json = {id:params.id}
         let result = await app.$axios.$get(`/api/article/getFrontArticleInfo`,{params:json});
         let info = result.info;
-        let {content,des,list,time,title} = info;
-		return {title,des,content,list,time}
+        let {content,des,tag,time,title} = info;
+		return {title,des,content,tag,time}
 	},
     head() {
 		return {
