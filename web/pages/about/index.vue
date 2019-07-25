@@ -6,7 +6,7 @@
 			<el-card class="box-card">
 				<h1>About Blog</h1>
 				<hr class="line"/>
-    			<p>技術内容：</p>
+    			<p>コンテンツ：</p>
     			<p class="about_title">Frontend：</p>
     			<p class="about_text"><b>SSR</b>,Vue.js ベースフレームワーク:<b>Nuxt.js + Element-UI + @nuxtjs/axios + Less</b></p>
     			<p class="about_title">Backend:</p>

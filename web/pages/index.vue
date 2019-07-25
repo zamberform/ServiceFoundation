@@ -63,7 +63,7 @@ export default {
   
 	async asyncData({app}) {
     let json = {page:1,pagesize:5}
-    let data = await app.$axios.$get(`/api/article/getFrontArticle`,{params:json});
+    let data = await app.$axios.$get(`/api/article/list`,{params:json});
     let {list,count} = data;
     let lately = list.slice(0,4);
 
@@ -72,7 +72,7 @@ export default {
 	methods: {
 		pagination(page) {
 			let json = {page,pagesize:5}
-			this.$axios.$get(`/api/article/getFrontArticle`,{params:json}).then(res=>{
+			this.$axios.$get(`/api/article/list`,{params:json}).then(res=>{
 				let {error,count,list} = res.data;
         this.list =list;
         

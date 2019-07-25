@@ -6,6 +6,7 @@ type App struct {
 	JwtSecret string
 	PrefixUrl string
 	APIPrefix string
+	CMSPrefix string
 
 	RuntimeRootPath string
 	TimeFormat      string

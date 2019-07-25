@@ -185,7 +185,7 @@ export default {
         },
         async commentLists (id) {
             try {
-                let {count, comments} = await this.$axios.$post(`/api/articleComments`, qs.stringify({ 'id': id }))
+                let {count, comments} = await this.$axios.$post(`/api/comment/list`, qs.stringify({ 'id': id }))
                 let {author} = await this.$axios.$post(`/api/comment/config/list`, qs.stringify({ 'id': id }))
                 this.count = count
 

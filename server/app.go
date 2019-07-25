@@ -46,7 +46,7 @@ func init() {
 func main() {
 	gin.SetMode(setting.AppSetting.RunMode)
 
-	routersInit := routers.InitRouter(setting.AppSetting.APIPrefix)
+	routersInit := routers.InitRouter(setting.AppSetting.APIPrefix, setting.AppSetting.CMSPrefix)
 	readTimeout := time.Duration(setting.ServerSetting.ReadTimeout) * time.Second
 	writeTimeout := time.Duration(setting.ServerSetting.WriteTimeout) * time.Second
 	endPoint := fmt.Sprintf(":%d", setting.ServerSetting.HttpPort)
