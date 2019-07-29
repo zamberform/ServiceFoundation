@@ -62,5 +62,5 @@ func GetAll(c *gin.Context) {
 }
 
 func AddComment(c *gin.Context) {
-	
+
 }

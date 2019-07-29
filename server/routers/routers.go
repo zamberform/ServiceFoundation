@@ -4,6 +4,8 @@ import (
 	"server/controllers/action"
 	"server/controllers/app"
 	"server/controllers/article"
+	"server/controllers/comment"
+	"server/controllers/tag"
 	"server/controllers/user"
 
 	"server/admin/suaction"
@@ -25,8 +27,8 @@ func InitRouter(apiPrefix string, cmsPrefix string) *gin.Engine {
 	{
 		apis.POST("/article/list", article.GetAll)
 		apis.POST("/tag/list", auth.SigninRequired, tag.GetAll)
-		apis.POST("/comment/list", auth.SigninRequired, comment.GetAll)
-		apis.POST("/comment", auth.SigninRequired, auth.VipReqired, comment.AddComment)
+		apis.POST("/comment/list/:articleId", auth.SigninRequired, comment.GetAll)
+		apis.POST("/comment/:articleId", auth.SigninRequired, auth.VipReqired, comment.AddComment)
 		apis.POST("/signin", user.SignIn)
 		// real user can do the action
 		apis.POST("/actions", auth.SigninRequired, action.DoAction)
@@ -41,6 +43,24 @@ func InitRouter(apiPrefix string, cmsPrefix string) *gin.Engine {
 	{
 		// real user can do the action
 		cms.POST("/users", suaction.AdminAction)
+		cms.POST("/tags", suaction.AdminAction)
+		cms.POST("/comments", suaction.AdminAction)
+		cms.POST("/articles", suaction.AdminAction)
+
+		cms.DELETE("/article/:id", suaction.AdminAction)
+		cms.DELETE("/tag/:id", suaction.AdminAction)
+		cms.DELETE("/user/:id", suaction.AdminAction)
+		cms.DELETE("/comment/:id", suaction.AdminAction)
+
+		cms.POST("/article/add", suaction.AdminAction)
+		cms.POST("/tag/add", suaction.AdminAction)
+		cms.POST("/user/add", suaction.AdminAction)
+		cms.POST("/comment/add", suaction.AdminAction)
+
+		cms.POST("/article/:id", suaction.AdminAction)
+		cms.POST("/tag/:id", suaction.AdminAction)
+		cms.POST("/user/:id", suaction.AdminAction)
+		cms.POST("/comment/:id", suaction.AdminAction)
 	}
 
 	return r
