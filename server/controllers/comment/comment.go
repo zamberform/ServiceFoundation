@@ -64,3 +64,16 @@ func GetAll(c *gin.Context) {
 func AddComment(c *gin.Context) {
 
 }
+
+func GetCommentList(c *gin.Context) {
+
+}
+
+// For Admin Api
+func PublishComment(c *gin.Context) {
+
+}
+
+func DeleteComment(c *gin.Context) {
+
+}

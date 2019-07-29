@@ -8,8 +8,6 @@ import (
 	"server/controllers/tag"
 	"server/controllers/user"
 
-	"server/admin/suaction"
-
 	"server/middleware/auth"
 	"server/middleware/jwt"
 
@@ -42,25 +40,27 @@ func InitRouter(apiPrefix string, cmsPrefix string) *gin.Engine {
 	cms.Use(jwt.AdminApiJwt(), auth.AdminRequired)
 	{
 		// real user can do the action
-		cms.POST("/users", suaction.AdminAction)
-		cms.POST("/tags", suaction.AdminAction)
-		cms.POST("/comments", suaction.AdminAction)
-		cms.POST("/articles", suaction.AdminAction)
+		cms.POST("/users", user.GetUserList)
+		cms.POST("/tags", tag.GetAll)
+		cms.POST("/comments", comment.GetAll)
+		cms.POST("/articles", article.GetAll)
 
-		cms.DELETE("/article/:id", suaction.AdminAction)
-		cms.DELETE("/tag/:id", suaction.AdminAction)
-		cms.DELETE("/user/:id", suaction.AdminAction)
-		cms.DELETE("/comment/:id", suaction.AdminAction)
+		cms.DELETE("/article/:id", article.DeleteArticle)
+		cms.DELETE("/tag/:id", tag.DeleteTag)
+		cms.DELETE("/user/:id", user.DeleteUser)
+		cms.DELETE("/comment/:id", comment.DeleteComment)
 
-		cms.POST("/article/add", suaction.AdminAction)
-		cms.POST("/tag/add", suaction.AdminAction)
-		cms.POST("/user/add", suaction.AdminAction)
-		cms.POST("/comment/add", suaction.AdminAction)
+		cms.POST("/article/add", article.AddArticle)
+		cms.POST("/tag/add", tag.AddTag)
+		cms.POST("/user/add", user.AddUser)
+		cms.POST("/comment/add", comment.AddComment)
 
-		cms.POST("/article/:id", suaction.AdminAction)
-		cms.POST("/tag/:id", suaction.AdminAction)
-		cms.POST("/user/:id", suaction.AdminAction)
-		cms.POST("/comment/:id", suaction.AdminAction)
+		cms.POST("/article/:id", article.UpdateArticle)
+		cms.POST("/tag/:id", tag.UpdateTag)
+		cms.POST("/user/:id", user.UpdateUser)
+		cms.POST("/comment/:id", comment.PublishComment)
+
+		cms.POST("/article/push/:id", article.PublishArticle)
 	}
 
 	return r

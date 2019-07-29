@@ -60,3 +60,24 @@ func GetAll(c *gin.Context) {
 	response.User.Token = token
 	c.JSON(http.StatusOK, response)
 }
+
+// For Admin Api
+func AddArticle(c *gin.Context) {
+
+}
+
+func UpdateArticle(c *gin.Context) {
+
+}
+
+func PublishArticle(c *gin.Context) {
+
+}
+
+func HideArticle(c *gin.Context) {
+
+}
+
+func DeleteArticle(c *gin.Context) {
+
+}

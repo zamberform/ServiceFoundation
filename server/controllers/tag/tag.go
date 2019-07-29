@@ -60,3 +60,16 @@ func GetAll(c *gin.Context) {
 	response.User.Token = token
 	c.JSON(http.StatusOK, response)
 }
+
+// For Admin Api
+func AddTag(c *gin.Context) {
+
+}
+
+func UpdateTag(c *gin.Context) {
+
+}
+
+func DeleteTag(c *gin.Context) {
+
+}

@@ -115,3 +115,20 @@ func Withdrawal(c *gin.Context) {
 	response.User.Token = token
 	c.JSON(http.StatusOK, response)
 }
+
+// For Admin Api
+func AddUser(c *gin.Context) {
+
+}
+
+func GetUserList(c *gin.Context) {
+
+}
+
+func UpdateUser(c *gin.Context) {
+
+}
+
+func DeleteUser(c *gin.Context) {
+
+}
