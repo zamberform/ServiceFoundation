@@ -1,75 +1,101 @@
 package tag
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"server/controllers/error"
-	"server/middleware/jwt"
 	"server/models/database"
-	"server/models/request"
-	"server/models/response"
-	"server/pkg/codes"
 	"server/pkg/gdb"
-	"time"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
 func GetAll(c *gin.Context) {
-	var commonRequest request.CommonReq
-	if err := c.ShouldBindJSON(&commonRequest); err != nil {
-		log.Fatalf("req.AppInfo err: %v", err)
+	tags := []database.Tag{}
+	if err := gdb.Instance().Find(&tags).Error; err != nil {
+		log.Fatalf("get.db.AppInfo err: %v", err)
+		error.SendErrJSON("error", c)
 		return
 	}
-	userId := commonRequest.User.UserId
-	uuid := commonRequest.User.UUID
-	token := commonRequest.User.Token
-	var user database.User
-	if err := gdb.Instance().Where("id = ?", userId).Find(&user).Error; err == nil {
-		userId = user.ID
-	} else {
-		var newUser database.User
-		newUser.UUID = uuid
-		newUser.CreatedAt = time.Now()
-		newUser.UpdatedAt = time.Now()
-		newUser.PlatformId = commonRequest.Platform
-
-		if err := gdb.Instance().Create(&newUser).Error; err != nil {
-			log.Fatalf("get.db.UserLoging err: %v", err)
-			error.SendErrJSON("error", c)
-			return
-		}
-
-		userId = user.ID
-	}
-
-	//check token is enable
-	if _, err := jwt.ParseToken(token); err != nil {
-		token, err = jwt.GenerateToken(string(userId), uuid)
-		if err != nil {
-			log.Fatalf("get.db.UserLoging err: %v", err)
-			error.SendErrJSON("error", c)
-			return
-		}
-	}
-
-	var response response.CommonRes
-	response.Msg = "success"
-	response.Code = codes.SUCCESS
-
-	response.User.Token = token
-	c.JSON(http.StatusOK, response)
+	c.JSON(http.StatusOK, tags)
 }
 
 // For Admin Api
 func AddTag(c *gin.Context) {
+	addTag := database.Tag{}
+	if err := c.ShouldBindJSON(&addTag); err != nil {
+		log.Fatalf("req.AppInfo err: %v", err)
+		return
+	}
 
+	if err := gdb.Instance().Create(&addTag).Error; err != nil {
+		log.Fatalf("get.db.AppInfo err: %v", err)
+		error.SendErrJSON("error", c)
+		return
+	}
+	c.JSON(http.StatusOK, "success")
 }
 
 func UpdateTag(c *gin.Context) {
+	updateInfo := database.Tag{}
+	if err := c.ShouldBindJSON(&updateInfo); err != nil {
+		log.Fatalf("req.AppInfo err: %v", err)
+		return
+	}
 
+	tagIdStr := c.Param("id")
+	updateBeforeTag := database.Tag{}
+	// 削除したいレコードのIDを指定
+	tagId, err := strconv.ParseUint(tagIdStr, 10, 32)
+	if err != nil {
+		fmt.Println(err)
+	}
+	updateBeforeTag.ID = uint(tagId)
+
+	if err := gdb.Instance().Find(&updateBeforeTag).Error; err != nil {
+		log.Fatalf("get.db.AppInfo err: %v", err)
+		error.SendErrJSON("error", c)
+		return
+	}
+
+	updateAfterTag := updateBeforeTag
+	updateAfterTag.Name = updateInfo.Name
+	updateAfterTag.Color = updateInfo.Color
+	if err := gdb.Instance().Model(&updateBeforeTag).Update(&updateAfterTag).Error; err != nil {
+		log.Fatalf("get.db.AppInfo err: %v", err)
+		error.SendErrJSON("error", c)
+	}
+
+	if err := gdb.Instance().Save(&updateAfterTag).Error; err != nil {
+		log.Fatalf("get.db.AppInfo err: %v", err)
+		error.SendErrJSON("error", c)
+	}
+
+	c.JSON(http.StatusOK, "success")
 }
 
 func DeleteTag(c *gin.Context) {
+	tagIdStr := c.Param("id")
+	delTag := database.Tag{}
+	// 削除したいレコードのIDを指定
+	tagId, err := strconv.ParseUint(tagIdStr, 10, 32)
+	if err != nil {
+		fmt.Println(err)
+	}
+	delTag.ID = uint(tagId)
 
+	if err := gdb.Instance().Find(&delTag).Error; err != nil {
+		log.Fatalf("get.db.AppInfo err: %v", err)
+		error.SendErrJSON("error", c)
+		return
+	}
+
+	if err := gdb.Instance().Delete(&delTag).Error; err != nil {
+		log.Fatalf("get.db.AppInfo err: %v", err)
+		error.SendErrJSON("error", c)
+	}
+
+	c.JSON(http.StatusOK, "success")
 }

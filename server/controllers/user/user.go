@@ -1,6 +1,7 @@
 package user
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"server/controllers/error"
@@ -10,6 +11,7 @@ import (
 	"server/models/response"
 	"server/pkg/codes"
 	"server/pkg/gdb"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -118,17 +120,90 @@ func Withdrawal(c *gin.Context) {
 
 // For Admin Api
 func AddUser(c *gin.Context) {
+	addUser := database.User{}
+	if err := c.ShouldBindJSON(&addUser); err != nil {
+		log.Fatalf("req.AppInfo err: %v", err)
+		return
+	}
 
+	if err := gdb.Instance().Create(&addUser).Error; err != nil {
+		log.Fatalf("get.db.AppInfo err: %v", err)
+		error.SendErrJSON("error", c)
+		return
+	}
+	c.JSON(http.StatusOK, "success")
 }
 
 func GetUserList(c *gin.Context) {
-
+	users := []database.User{}
+	if err := gdb.Instance().Find(&users).Error; err != nil {
+		log.Fatalf("get.db.AppInfo err: %v", err)
+		error.SendErrJSON("error", c)
+		return
+	}
+	c.JSON(http.StatusOK, "success")
 }
 
 func UpdateUser(c *gin.Context) {
+	updateInfo := database.User{}
+	if err := c.ShouldBindJSON(&updateInfo); err != nil {
+		log.Fatalf("req.AppInfo err: %v", err)
+		return
+	}
 
+	userIdStr := c.Param("id")
+	updateBeforeUser := database.User{}
+	// 削除したいレコードのIDを指定
+	userId, err := strconv.ParseUint(userIdStr, 10, 32)
+	if err != nil {
+		fmt.Println(err)
+	}
+	updateBeforeUser.ID = uint(userId)
+
+	if err := gdb.Instance().Find(&updateBeforeUser).Error; err != nil {
+		log.Fatalf("get.db.AppInfo err: %v", err)
+		error.SendErrJSON("error", c)
+		return
+	}
+
+	updateAfterUser := updateBeforeUser
+	updateAfterUser.Name = updateInfo.Name
+	updateAfterUser.Email = updateInfo.Email
+	updateAfterUser.Introduce = updateInfo.Introduce
+	updateAfterUser.AvatarURL = updateInfo.AvatarURL
+	if err := gdb.Instance().Model(&updateBeforeUser).Update(&updateAfterUser).Error; err != nil {
+		log.Fatalf("get.db.AppInfo err: %v", err)
+		error.SendErrJSON("error", c)
+	}
+
+	if err := gdb.Instance().Save(&updateAfterUser).Error; err != nil {
+		log.Fatalf("get.db.AppInfo err: %v", err)
+		error.SendErrJSON("error", c)
+	}
+
+	c.JSON(http.StatusOK, "success")
 }
 
 func DeleteUser(c *gin.Context) {
+	userIdStr := c.Param("id")
+	delUser := database.User{}
+	// 削除したいレコードのIDを指定
+	userId, err := strconv.ParseUint(userIdStr, 10, 32)
+	if err != nil {
+		fmt.Println(err)
+	}
+	delUser.ID = uint(userId)
 
+	if err := gdb.Instance().Find(&delUser).Error; err != nil {
+		log.Fatalf("get.db.AppInfo err: %v", err)
+		error.SendErrJSON("error", c)
+		return
+	}
+
+	if err := gdb.Instance().Delete(&delUser).Error; err != nil {
+		log.Fatalf("get.db.AppInfo err: %v", err)
+		error.SendErrJSON("error", c)
+	}
+
+	c.JSON(http.StatusOK, "success")
 }

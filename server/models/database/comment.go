@@ -9,4 +9,5 @@ type Comment struct {
 	Comment   string     `json:"comment"`
 	User      User       `json:"user"`
 	Status    int        `json:"status"`
+	ArticleId uint       `json:"articleId"`
 }

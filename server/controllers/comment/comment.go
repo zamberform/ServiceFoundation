@@ -1,79 +1,103 @@
 package comment
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"server/controllers/error"
-	"server/middleware/jwt"
 	"server/models/database"
-	"server/models/request"
-	"server/models/response"
-	"server/pkg/codes"
 	"server/pkg/gdb"
-	"time"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
 func GetAll(c *gin.Context) {
-	var commonRequest request.CommonReq
-	if err := c.ShouldBindJSON(&commonRequest); err != nil {
-		log.Fatalf("req.AppInfo err: %v", err)
+	articleId, _ := c.Get("articleId")
+
+	comments := []database.Comment{}
+	if err := gdb.Instance().Find(&comments).Where("articleId = ?", articleId).Error; err != nil {
+		log.Fatalf("get.db.AppInfo err: %v", err)
+		error.SendErrJSON("error", c)
 		return
 	}
-	userId := commonRequest.User.UserId
-	uuid := commonRequest.User.UUID
-	token := commonRequest.User.Token
-	var user database.User
-	if err := gdb.Instance().Where("id = ?", userId).Find(&user).Error; err == nil {
-		userId = user.ID
-	} else {
-		var newUser database.User
-		newUser.UUID = uuid
-		newUser.CreatedAt = time.Now()
-		newUser.UpdatedAt = time.Now()
-		newUser.PlatformId = commonRequest.Platform
-
-		if err := gdb.Instance().Create(&newUser).Error; err != nil {
-			log.Fatalf("get.db.UserLoging err: %v", err)
-			error.SendErrJSON("error", c)
-			return
-		}
-
-		userId = user.ID
-	}
-
-	//check token is enable
-	if _, err := jwt.ParseToken(token); err != nil {
-		token, err = jwt.GenerateToken(string(userId), uuid)
-		if err != nil {
-			log.Fatalf("get.db.UserLoging err: %v", err)
-			error.SendErrJSON("error", c)
-			return
-		}
-	}
-
-	var response response.CommonRes
-	response.Msg = "success"
-	response.Code = codes.SUCCESS
-
-	response.User.Token = token
-	c.JSON(http.StatusOK, response)
+	c.JSON(http.StatusOK, comments)
 }
 
 func AddComment(c *gin.Context) {
+	articleIdStr := c.Param("id")
+	addComment := database.Comment{}
+	if err := c.ShouldBindJSON(&addComment); err != nil {
+		log.Fatalf("req.AppInfo err: %v", err)
+		return
+	}
 
-}
+	articleId, err := strconv.ParseUint(articleIdStr, 10, 32)
+	if err != nil {
+		fmt.Println(err)
+	}
+	addComment.ArticleId = uint(articleId)
 
-func GetCommentList(c *gin.Context) {
-
+	if err := gdb.Instance().Create(&addComment).Error; err != nil {
+		log.Fatalf("get.db.AppInfo err: %v", err)
+		error.SendErrJSON("error", c)
+		return
+	}
+	c.JSON(http.StatusOK, "success")
 }
 
 // For Admin Api
 func PublishComment(c *gin.Context) {
+	commentIdStr := c.Param("id")
+	publishBeforeComment := database.Comment{}
+	// 削除したいレコードのIDを指定
+	commentId, err := strconv.ParseUint(commentIdStr, 10, 32)
+	if err != nil {
+		fmt.Println(err)
+	}
+	publishBeforeComment.ID = uint(commentId)
 
+	if err := gdb.Instance().Find(&publishBeforeComment).Error; err != nil {
+		log.Fatalf("get.db.AppInfo err: %v", err)
+		error.SendErrJSON("error", c)
+		return
+	}
+
+	publishAfterComment := publishBeforeComment
+	publishAfterComment.Status = 2
+	if err := gdb.Instance().Model(&publishBeforeComment).Update(&publishAfterComment).Error; err != nil {
+		log.Fatalf("get.db.AppInfo err: %v", err)
+		error.SendErrJSON("error", c)
+	}
+
+	if err := gdb.Instance().Save(&publishAfterComment).Error; err != nil {
+		log.Fatalf("get.db.AppInfo err: %v", err)
+		error.SendErrJSON("error", c)
+	}
+
+	c.JSON(http.StatusOK, "success")
 }
 
 func DeleteComment(c *gin.Context) {
+	commentIdStr := c.Param("id")
+	delComment := database.Comment{}
+	// 削除したいレコードのIDを指定
+	commentId, err := strconv.ParseUint(commentIdStr, 10, 32)
+	if err != nil {
+		fmt.Println(err)
+	}
+	delComment.ID = uint(commentId)
 
+	if err := gdb.Instance().Find(&delComment).Error; err != nil {
+		log.Fatalf("get.db.AppInfo err: %v", err)
+		error.SendErrJSON("error", c)
+		return
+	}
+
+	if err := gdb.Instance().Delete(&delComment).Error; err != nil {
+		log.Fatalf("get.db.AppInfo err: %v", err)
+		error.SendErrJSON("error", c)
+	}
+
+	c.JSON(http.StatusOK, "success")
 }
