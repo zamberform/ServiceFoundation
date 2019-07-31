@@ -131,7 +131,10 @@ func AddUser(c *gin.Context) {
 		error.SendErrJSON("error", c)
 		return
 	}
-	c.JSON(http.StatusOK, "success")
+	c.JSON(http.StatusOK, gin.H{
+		"status":  200,
+		"err_msg": "",
+	})
 }
 
 func GetUserList(c *gin.Context) {
@@ -141,7 +144,12 @@ func GetUserList(c *gin.Context) {
 		error.SendErrJSON("error", c)
 		return
 	}
-	c.JSON(http.StatusOK, "success")
+
+	c.JSON(http.StatusOK, gin.H{
+		"status": 200,
+		"msg":    "",
+		"users":  users,
+	})
 }
 
 func UpdateUser(c *gin.Context) {
@@ -172,12 +180,12 @@ func UpdateUser(c *gin.Context) {
 	updateAfterUser.Introduce = updateInfo.Introduce
 	updateAfterUser.AvatarURL = updateInfo.AvatarURL
 	if err := gdb.Instance().Model(&updateBeforeUser).Update(&updateAfterUser).Error; err != nil {
-		log.Fatalf("get.db.AppInfo err: %v", err)
+		log.Printf("get.db.AppInfo err: %v", err)
 		error.SendErrJSON("error", c)
 	}
 
 	if err := gdb.Instance().Save(&updateAfterUser).Error; err != nil {
-		log.Fatalf("get.db.AppInfo err: %v", err)
+		log.Printf("get.db.AppInfo err: %v", err)
 		error.SendErrJSON("error", c)
 	}
 
@@ -195,15 +203,19 @@ func DeleteUser(c *gin.Context) {
 	delUser.ID = uint(userId)
 
 	if err := gdb.Instance().Find(&delUser).Error; err != nil {
-		log.Fatalf("get.db.AppInfo err: %v", err)
+		log.Printf("get.db.AppInfo err: %v", err)
 		error.SendErrJSON("error", c)
 		return
 	}
 
 	if err := gdb.Instance().Delete(&delUser).Error; err != nil {
-		log.Fatalf("get.db.AppInfo err: %v", err)
+		log.Printf("get.db.AppInfo err: %v", err)
 		error.SendErrJSON("error", c)
+		return
 	}
 
-	c.JSON(http.StatusOK, "success")
+	c.JSON(http.StatusOK, gin.H{
+		"status": 200,
+		"msg":    "",
+	})
 }

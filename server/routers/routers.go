@@ -25,8 +25,8 @@ func InitRouter(apiPrefix string, cmsPrefix string) *gin.Engine {
 	{
 		apis.POST("/article/list", article.GetAll)
 		apis.POST("/tag/list", auth.SigninRequired, tag.GetAll)
-		apis.POST("/comment/list/:articleId", auth.SigninRequired, comment.GetAll)
-		apis.POST("/comment/:articleId", auth.SigninRequired, auth.VipReqired, comment.AddComment)
+		apis.POST("/comment/list", auth.SigninRequired, comment.GetAll)
+		apis.POST("/comment", auth.SigninRequired, auth.VipReqired, comment.AddComment)
 		apis.POST("/signin", user.SignIn)
 		// real user can do the action
 		apis.POST("/actions", auth.SigninRequired, action.DoAction)
@@ -42,7 +42,7 @@ func InitRouter(apiPrefix string, cmsPrefix string) *gin.Engine {
 		// real user can do the action
 		cms.POST("/users", user.GetUserList)
 		cms.POST("/tags", tag.GetAll)
-		cms.POST("/comments", comment.GetAll)
+		cms.POST("/comments", comment.GetCommentList)
 		cms.POST("/articles", article.GetAll)
 
 		cms.DELETE("/article/:id", article.DeleteArticle)
@@ -55,12 +55,12 @@ func InitRouter(apiPrefix string, cmsPrefix string) *gin.Engine {
 		cms.POST("/user/add", user.AddUser)
 		cms.POST("/comment/add", comment.AddComment)
 
-		cms.POST("/article/:id", article.UpdateArticle)
-		cms.POST("/tag/:id", tag.UpdateTag)
-		cms.POST("/user/:id", user.UpdateUser)
-		cms.POST("/comment/:id", comment.PublishComment)
+		cms.POST("/article", article.UpdateArticle)
+		cms.POST("/tag", tag.UpdateTag)
+		cms.POST("/user", user.UpdateUser)
+		cms.POST("/comment", comment.PublishComment)
 
-		cms.POST("/article/push/:id", article.PublishArticle)
+		cms.POST("/article/push", article.PublishArticle)
 	}
 
 	return r

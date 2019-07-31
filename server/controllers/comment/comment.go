@@ -17,7 +17,7 @@ func GetAll(c *gin.Context) {
 
 	comments := []database.Comment{}
 	if err := gdb.Instance().Find(&comments).Where("articleId = ?", articleId).Error; err != nil {
-		log.Fatalf("get.db.AppInfo err: %v", err)
+		log.Printf("get.db.AppInfo err: %v", err)
 		error.SendErrJSON("error", c)
 		return
 	}
@@ -28,7 +28,7 @@ func AddComment(c *gin.Context) {
 	articleIdStr := c.Param("id")
 	addComment := database.Comment{}
 	if err := c.ShouldBindJSON(&addComment); err != nil {
-		log.Fatalf("req.AppInfo err: %v", err)
+		log.Printf("req.AppInfo err: %v", err)
 		return
 	}
 
@@ -39,11 +39,26 @@ func AddComment(c *gin.Context) {
 	addComment.ArticleId = uint(articleId)
 
 	if err := gdb.Instance().Create(&addComment).Error; err != nil {
-		log.Fatalf("get.db.AppInfo err: %v", err)
+		log.Printf("get.db.AppInfo err: %v", err)
 		error.SendErrJSON("error", c)
 		return
 	}
 	c.JSON(http.StatusOK, "success")
+}
+
+func GetCommentList(c *gin.Context) {
+	comments := []database.Comment{}
+	if err := gdb.Instance().Find(&comments).Error; err != nil {
+		log.Printf("get.db.AppInfo err: %v", err)
+		error.SendErrJSON("error", c)
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":   200,
+		"msg":      "success",
+		"comments": comments,
+	})
 }
 
 // For Admin Api
@@ -54,11 +69,13 @@ func PublishComment(c *gin.Context) {
 	commentId, err := strconv.ParseUint(commentIdStr, 10, 32)
 	if err != nil {
 		fmt.Println(err)
+		error.SendErrJSON("error", c)
+		return
 	}
 	publishBeforeComment.ID = uint(commentId)
 
 	if err := gdb.Instance().Find(&publishBeforeComment).Error; err != nil {
-		log.Fatalf("get.db.AppInfo err: %v", err)
+		log.Printf("get.db.AppInfo err: %v", err)
 		error.SendErrJSON("error", c)
 		return
 	}
@@ -66,16 +83,21 @@ func PublishComment(c *gin.Context) {
 	publishAfterComment := publishBeforeComment
 	publishAfterComment.Status = 2
 	if err := gdb.Instance().Model(&publishBeforeComment).Update(&publishAfterComment).Error; err != nil {
-		log.Fatalf("get.db.AppInfo err: %v", err)
+		log.Printf("get.db.AppInfo err: %v", err)
 		error.SendErrJSON("error", c)
+		return
 	}
 
 	if err := gdb.Instance().Save(&publishAfterComment).Error; err != nil {
-		log.Fatalf("get.db.AppInfo err: %v", err)
+		log.Printf("get.db.AppInfo err: %v", err)
 		error.SendErrJSON("error", c)
+		return
 	}
 
-	c.JSON(http.StatusOK, "success")
+	c.JSON(http.StatusOK, gin.H{
+		"status":  200,
+		"err_msg": "success",
+	})
 }
 
 func DeleteComment(c *gin.Context) {
@@ -89,15 +111,19 @@ func DeleteComment(c *gin.Context) {
 	delComment.ID = uint(commentId)
 
 	if err := gdb.Instance().Find(&delComment).Error; err != nil {
-		log.Fatalf("get.db.AppInfo err: %v", err)
+		log.Printf("get.db.AppInfo err: %v", err)
 		error.SendErrJSON("error", c)
 		return
 	}
 
 	if err := gdb.Instance().Delete(&delComment).Error; err != nil {
-		log.Fatalf("get.db.AppInfo err: %v", err)
+		log.Printf("get.db.AppInfo err: %v", err)
 		error.SendErrJSON("error", c)
+		return
 	}
 
-	c.JSON(http.StatusOK, "success")
+	c.JSON(http.StatusOK, gin.H{
+		"status": 200,
+		"msg":    "",
+	})
 }

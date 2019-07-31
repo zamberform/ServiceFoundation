@@ -79,12 +79,57 @@ CREATE TABLE `package` (
   `price` int(11) DEFAULT '0',
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NOW(),
-  `deleted_at` datetime DEFAULT NULL,
   `show_start_at` datetime DEFAULT NULL,
   `show_end_at` datetime DEFAULT NULL,
   `enable_start_at` datetime DEFAULT NULL,
   `enable_end_at` datetime DEFAULT NULL,
   `is_active` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+-- ----------------------------
+-- Table structure for article
+-- ----------------------------
+DROP TABLE IF EXISTS `article`;
+CREATE TABLE `article` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `title` varchar(250) DEFAULT NULL,
+  `status` int(11) DEFAULT '0',
+  `content_desc` datetime DEFAULT NULL,
+  `comment_flg` tinyint(1) NOT NULL DEFAULT '0',
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NOW(),
+  `tag_id` int(11) DEFAULT NULL,
+  FOREIGN KEY (`tag_id`) 
+  REFERENCES `tag` (`id`),
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+-- ----------------------------
+-- Table structure for comment
+-- ----------------------------
+DROP TABLE IF EXISTS `comment`;
+CREATE TABLE `comment` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` int(11) DEFAULT '0',
+  `comment` varchar(250) DEFAULT NULL,
+  `created_at` datetime DEFAULT NOW(),
+  `article_id` int(11) DEFAULT NULL,
+  FOREIGN KEY (`article_id`) 
+  REFERENCES `article` (`id`),
+  `user_id` int(11) DEFAULT NULL,
+  FOREIGN KEY (`user_id`) 
+  REFERENCES `user` (`id`),
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+-- ----------------------------
+-- Table structure for tag
+-- ----------------------------
+DROP TABLE IF EXISTS `tag`;
+CREATE TABLE `tag` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(250) DEFAULT NULL,
+  `color` varchar(250) DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NOW(),
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 -- ----------------------------

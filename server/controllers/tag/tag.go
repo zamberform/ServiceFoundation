@@ -19,7 +19,12 @@ func GetAll(c *gin.Context) {
 		error.SendErrJSON("error", c)
 		return
 	}
-	c.JSON(http.StatusOK, tags)
+
+	c.JSON(http.StatusOK, gin.H{
+		"status": 200,
+		"msg":    "",
+		"tags":   tags,
+	})
 }
 
 // For Admin Api
@@ -87,15 +92,17 @@ func DeleteTag(c *gin.Context) {
 	delTag.ID = uint(tagId)
 
 	if err := gdb.Instance().Find(&delTag).Error; err != nil {
-		log.Fatalf("get.db.AppInfo err: %v", err)
 		error.SendErrJSON("error", c)
 		return
 	}
 
 	if err := gdb.Instance().Delete(&delTag).Error; err != nil {
-		log.Fatalf("get.db.AppInfo err: %v", err)
 		error.SendErrJSON("error", c)
+		return
 	}
 
-	c.JSON(http.StatusOK, "success")
+	c.JSON(http.StatusOK, gin.H{
+		"status": 200,
+		"msg":    "",
+	})
 }

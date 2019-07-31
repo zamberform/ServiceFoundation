@@ -4,7 +4,6 @@ import (
 	"log"
 	"server/models/database"
 	"server/models/request"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -46,17 +45,20 @@ func VipReqired(c *gin.Context) {
 }
 
 func AdminRequired(c *gin.Context) {
-	adminId := c.Query("adminId")
-
-	var admin database.Admin
-
-	val_uint, _ := strconv.ParseUint(adminId, 10, 64)
-	var err error
-	if admin, err = searchAdminUser(val_uint); err != nil {
-		log.Fatalf("req.Auth err: %v", err)
-		return
-	}
-
-	c.Set("admin", admin)
 	c.Next()
+	/*
+		adminId := c.Query("adminId")
+
+		var admin database.Admin
+
+		val_uint, _ := strconv.ParseUint(adminId, 10, 64)
+		var err error
+		if admin, err = searchAdminUser(val_uint); err != nil {
+			log.Fatalf("req.Auth err: %v", err)
+			return
+		}
+
+		c.Set("admin", admin)
+		c.Next()
+	*/
 }

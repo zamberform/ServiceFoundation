@@ -19,7 +19,12 @@ func GetAll(c *gin.Context) {
 		error.SendErrJSON("error", c)
 		return
 	}
-	c.JSON(http.StatusOK, articles)
+
+	c.JSON(http.StatusOK, gin.H{
+		"status": 200,
+		"count":  len(articles),
+		"list":   articles,
+	})
 }
 
 // For Admin Api
@@ -42,7 +47,7 @@ func UpdateArticle(c *gin.Context) {
 	articleIdStr := c.Param("id")
 	updateInfo := database.Article{}
 	if err := c.ShouldBindJSON(&updateInfo); err != nil {
-		log.Fatalf("req.AppInfo err: %v", err)
+		log.Printf("req.AppInfo err: %v", err)
 		return
 	}
 
@@ -55,7 +60,7 @@ func UpdateArticle(c *gin.Context) {
 	publishBeforeArticle.ID = uint(articleId)
 
 	if err := gdb.Instance().Find(&publishBeforeArticle).Error; err != nil {
-		log.Fatalf("get.db.AppInfo err: %v", err)
+		log.Printf("get.db.AppInfo err: %v", err)
 		error.SendErrJSON("error", c)
 		return
 	}
@@ -65,16 +70,21 @@ func UpdateArticle(c *gin.Context) {
 	publishAfterArticle.ContentDesc = updateInfo.ContentDesc
 
 	if err := gdb.Instance().Model(&publishBeforeArticle).Update(&publishAfterArticle).Error; err != nil {
-		log.Fatalf("get.db.AppInfo err: %v", err)
+		log.Printf("get.db.AppInfo err: %v", err)
 		error.SendErrJSON("error", c)
+		return
 	}
 
 	if err := gdb.Instance().Save(&publishAfterArticle).Error; err != nil {
-		log.Fatalf("get.db.AppInfo err: %v", err)
+		log.Printf("get.db.AppInfo err: %v", err)
 		error.SendErrJSON("error", c)
+		return
 	}
 
-	c.JSON(http.StatusOK, "success")
+	c.JSON(http.StatusOK, gin.H{
+		"status":  200,
+		"err_msg": "success",
+	})
 }
 
 func PublishArticle(c *gin.Context) {
@@ -84,6 +94,7 @@ func PublishArticle(c *gin.Context) {
 	articleId, err := strconv.ParseUint(articleIdStr, 10, 32)
 	if err != nil {
 		fmt.Println(err)
+		return
 	}
 	publishBeforeArticle.ID = uint(articleId)
 
@@ -98,11 +109,13 @@ func PublishArticle(c *gin.Context) {
 	if err := gdb.Instance().Model(&publishBeforeArticle).Update(&publishAfterArticle).Error; err != nil {
 		log.Fatalf("get.db.AppInfo err: %v", err)
 		error.SendErrJSON("error", c)
+		return
 	}
 
 	if err := gdb.Instance().Save(&publishAfterArticle).Error; err != nil {
 		log.Fatalf("get.db.AppInfo err: %v", err)
 		error.SendErrJSON("error", c)
+		return
 	}
 
 	c.JSON(http.StatusOK, "success")
@@ -115,11 +128,13 @@ func HideArticle(c *gin.Context) {
 	articleId, err := strconv.ParseUint(articleIdStr, 10, 32)
 	if err != nil {
 		fmt.Println(err)
+		error.SendErrJSON("error", c)
+		return
 	}
 	publishBeforeArticle.ID = uint(articleId)
 
 	if err := gdb.Instance().Find(&publishBeforeArticle).Error; err != nil {
-		log.Fatalf("get.db.AppInfo err: %v", err)
+		log.Printf("get.db.AppInfo err: %v", err)
 		error.SendErrJSON("error", c)
 		return
 	}
@@ -127,16 +142,21 @@ func HideArticle(c *gin.Context) {
 	publishAfterArticle := publishBeforeArticle
 	publishAfterArticle.Status = 2
 	if err := gdb.Instance().Model(&publishBeforeArticle).Update(&publishAfterArticle).Error; err != nil {
-		log.Fatalf("get.db.AppInfo err: %v", err)
+		log.Printf("get.db.AppInfo err: %v", err)
 		error.SendErrJSON("error", c)
+		return
 	}
 
 	if err := gdb.Instance().Save(&publishAfterArticle).Error; err != nil {
-		log.Fatalf("get.db.AppInfo err: %v", err)
+		log.Printf("get.db.AppInfo err: %v", err)
 		error.SendErrJSON("error", c)
+		return
 	}
 
-	c.JSON(http.StatusOK, "success")
+	c.JSON(http.StatusOK, gin.H{
+		"status":  200,
+		"err_msg": "success",
+	})
 }
 
 func DeleteArticle(c *gin.Context) {
@@ -150,15 +170,18 @@ func DeleteArticle(c *gin.Context) {
 	delArticle.ID = uint(articleId)
 
 	if err := gdb.Instance().Find(&delArticle).Error; err != nil {
-		log.Fatalf("get.db.AppInfo err: %v", err)
+		// log.Fatalf("get.db.AppInfo err: %v", err)
 		error.SendErrJSON("error", c)
 		return
 	}
 
 	if err := gdb.Instance().Delete(&delArticle).Error; err != nil {
-		log.Fatalf("get.db.AppInfo err: %v", err)
 		error.SendErrJSON("error", c)
+		return
 	}
 
-	c.JSON(http.StatusOK, "success")
+	c.JSON(http.StatusOK, gin.H{
+		"status":  200,
+		"err_msg": "success",
+	})
 }

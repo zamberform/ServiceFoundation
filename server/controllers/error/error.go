@@ -34,9 +34,8 @@ func SendErrJSON(msg string, args ...interface{}) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"errNo": errCode,
-		"msg":   msg,
-		"data":  gin.H{},
+		"status": errCode,
+		"msg":    msg,
 	})
 	c.Abort()
 }
