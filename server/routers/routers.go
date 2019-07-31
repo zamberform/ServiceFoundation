@@ -1,6 +1,7 @@
 package routers
 
 import (
+	"server/admin/suaction"
 	"server/controllers/action"
 	"server/controllers/app"
 	"server/controllers/article"
@@ -37,6 +38,7 @@ func InitRouter(apiPrefix string, cmsPrefix string) *gin.Engine {
 	}
 
 	cms := r.Group(cmsPrefix)
+	cms.POST("/login", suaction.Login)
 	cms.Use(jwt.AdminApiJwt(), auth.AdminRequired)
 	{
 		// real user can do the action
