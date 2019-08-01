@@ -26,7 +26,6 @@ export function logout(token) {
 export function getList(token) {
   return request({
     url: '/user/list',
-    method: 'get',
-    params: { token }
+    method: 'post'
   })
 }

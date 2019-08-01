@@ -96,7 +96,7 @@ export default {
       listLoading: true,
       dialogFormVisible: false,
       dialogConfirmVisible: false,
-      temp : {
+      temp: {
         id: undefined,
         name: '',
         color: '#000000',
@@ -111,7 +111,7 @@ export default {
     fetchData() {
       this.listLoading = true
       getList().then(response => {
-        this.list = response.items
+        this.list = response.tags
         this.listLoading = false
       })
     },

@@ -21,9 +21,10 @@ func GetAll(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"status": 200,
-		"count":  len(articles),
-		"list":   articles,
+		"status":   200,
+		"msg":      "",
+		"count":    len(articles),
+		"articles": articles,
 	})
 }
 

@@ -94,7 +94,7 @@ CREATE TABLE `article` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `title` varchar(250) DEFAULT NULL,
   `status` int(11) DEFAULT '0',
-  `content_desc` datetime DEFAULT NULL,
+  `content_desc` varchar(250) DEFAULT NULL,
   `comment_flg` tinyint(1) NOT NULL DEFAULT '0',
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NOW(),

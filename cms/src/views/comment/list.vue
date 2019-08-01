@@ -8,21 +8,22 @@
       fit
       highlight-current-row
     >
-      <el-table-column align="center" label="ID">
+      <el-table-column align="center" label="Comment">
         <template slot-scope="scope">
-          <span>{{ scope.row.title }}</span>
+          <span>{{ scope.row.comment }}</span>
         </template>
       </el-table-column>
 
       <el-table-column width="180px" align="center" label="Date">
         <template slot-scope="scope">
-          <span>{{ scope.row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+          <!-- <span>{{ scope.row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span> -->
+          <span>{{ scope.row.created_at }}</span>
         </template>
       </el-table-column>
 
       <el-table-column width="120px" align="center" label="Author">
         <template slot-scope="scope">
-          <span>{{ scope.row.author }}</span>
+          <span>{{ scope.row.user.name }}</span>
         </template>
       </el-table-column>
 
@@ -83,7 +84,8 @@ export default {
     fetchData() {
       this.listLoading = true
       getList().then(response => {
-        this.list = response.items
+        this.list = response.comments
+        console.log(this.list)
         this.listLoading = false
       })
     },

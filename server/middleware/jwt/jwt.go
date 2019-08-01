@@ -96,39 +96,27 @@ func ApiJwt() gin.HandlerFunc {
 
 func AdminApiJwt() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.Next()
-		/*
-			var code int
-			var data interface{}
-
-			code = codes.SUCCESS
-			token := c.Query("token")
-
-			if token == "" {
-				code = codes.INVALID_PARAMS
-			} else {
-				_, err := ParseToken(token)
-				if err != nil {
-					switch err.(*jwt.ValidationError).Errors {
-					case jwt.ValidationErrorExpired:
-						code = codes.ERROR_AUTH_CHECK_TOKEN_TIMEOUT
-					default:
-						code = codes.ERROR_AUTH_CHECK_TOKEN_FAIL
-					}
+		var code int
+		code = codes.SUCCESS
+		if values, _ := c.Request.Header["X-Token"]; len(values) > 0 {
+			userToken := values[0]
+			if _, err := ParseToken(userToken); err != nil {
+				switch err.(*jwt.ValidationError).Errors {
+				case jwt.ValidationErrorExpired:
+					code = codes.ERROR_AUTH_CHECK_TOKEN_TIMEOUT
+				default:
+					code = codes.ERROR_AUTH_CHECK_TOKEN_FAIL
 				}
-			}
 
-			if code != codes.SUCCESS {
 				c.JSON(http.StatusUnauthorized, gin.H{
-					"code": code,
-					"msg":  language.GetMsg(code),
-					"data": data,
+					"status": code,
+					"msg":    language.GetMsg(code),
 				})
-
 				c.Abort()
 				return
+			} else {
+				c.Next()
 			}
-			c.Next()
-		*/
+		}
 	}
 }

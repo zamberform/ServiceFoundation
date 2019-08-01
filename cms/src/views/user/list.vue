@@ -20,18 +20,18 @@
       </el-table-column>
       <el-table-column class-name="status-col" label="Role" width="110" align="center">
         <template slot-scope="scope">
-          <el-tag :type="scope.row.role | statusFilter">{{ scope.row.role }}</el-tag>
+          <el-tag :type="scope.row.status | statusFilter">{{ scope.row.role }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="登録時期">
         <template slot-scope="scope">
-          {{ scope.row.create_time }}
+          {{ scope.row.created_at }}
         </template>
       </el-table-column>
       <el-table-column min-width="300px" label="Desc">
         <template slot-scope="{row}">
           <template v-if="row.edit">
-            <el-input v-model="row.desc" class="edit-input" size="small" />
+            <el-input v-model="row.introduce" class="edit-input" size="small" />
             <el-button
               class="cancel-btn"
               size="small"
@@ -42,7 +42,7 @@
               cancel
             </el-button>
           </template>
-          <span v-else>{{ row.desc }}</span>
+          <span v-else>{{ row.introduce }}</span>
         </template>
       </el-table-column>
 
@@ -99,12 +99,12 @@ export default {
     fetchData() {
       this.listLoading = true
       getList().then(response => {
-        this.list = response.items
+        this.list = response.users
         this.listLoading = false
       })
     },
     cancelEdit(row) {
-      row.desc = row.originalTitle
+      row.introduce = row.originalTitle
       row.edit = false
       this.$message({
         message: 'The title has been restored to the original value',
@@ -113,7 +113,7 @@ export default {
     },
     confirmEdit(row) {
       row.edit = false
-      row.originalTitle = row.desc
+      row.originalTitle = row.introduce
       this.$message({
         message: 'The title has been edited',
         type: 'success'

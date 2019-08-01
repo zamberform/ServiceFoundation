@@ -48,7 +48,7 @@ func AddComment(c *gin.Context) {
 
 func GetCommentList(c *gin.Context) {
 	comments := []database.Comment{}
-	if err := gdb.Instance().Find(&comments).Error; err != nil {
+	if err := gdb.Instance().Preload("User").Find(&comments).Error; err != nil {
 		log.Printf("get.db.AppInfo err: %v", err)
 		error.SendErrJSON("error", c)
 		return

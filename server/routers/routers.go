@@ -44,10 +44,10 @@ func InitRouter(apiPrefix string, cmsPrefix string) *gin.Engine {
 		cms.POST("/admin/info", suaction.GetAdminInfo)
 		cms.POST("/admin/logout", suaction.Logout)
 		// real user can do the action
-		cms.POST("/users", user.GetUserList)
-		cms.POST("/tags", tag.GetAll)
-		cms.POST("/comments", comment.GetCommentList)
-		cms.POST("/articles", article.GetAll)
+		cms.POST("/user/list", user.GetUserList)
+		cms.POST("/tag/list", tag.GetAll)
+		cms.POST("/comment/list", comment.GetCommentList)
+		cms.POST("/article/list", article.GetAll)
 
 		cms.DELETE("/article/:id", article.DeleteArticle)
 		cms.DELETE("/tag/:id", tag.DeleteTag)
