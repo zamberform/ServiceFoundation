@@ -17,7 +17,7 @@ func SendErrJSON(msg string, args ...interface{}) {
 	if len(args) == 1 {
 		theCtx, ok := args[0].(*gin.Context)
 		if !ok {
-			panic("缺少 *gin.Context")
+			panic("No More *gin.Context")
 		}
 		c = theCtx
 	} else if len(args) == 2 {

@@ -198,7 +198,9 @@ func DeleteUser(c *gin.Context) {
 	// 削除したいレコードのIDを指定
 	userId, err := strconv.ParseUint(userIdStr, 10, 32)
 	if err != nil {
-		fmt.Println(err)
+		log.Printf("get.db.AppInfo err: %v", err)
+		error.SendErrJSON("error", c)
+		return
 	}
 	delUser.ID = uint(userId)
 

@@ -35,7 +35,7 @@ func AddArticle(c *gin.Context) {
 		log.Fatalf("req.AppInfo err: %v", err)
 		return
 	}
-
+	
 	if err := gdb.Instance().Create(&addArticle).Error; err != nil {
 		log.Fatalf("get.db.AppInfo err: %v", err)
 		error.SendErrJSON("error", c)

@@ -1,7 +1,6 @@
 package tag
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"server/controllers/error"
@@ -68,6 +67,7 @@ func UpdateTag(c *gin.Context) {
 	updateAfterTag := updateBeforeTag
 	updateAfterTag.Name = updateInfo.Name
 	updateAfterTag.Color = updateInfo.Color
+	updateAfterTag.UpdatedAt = time.Now()
 	if err := gdb.Instance().Model(&updateBeforeTag).Update(&updateAfterTag).Error; err != nil {
 		log.Fatalf("get.db.AppInfo err: %v", err)
 		error.SendErrJSON("error", c)
@@ -90,7 +90,9 @@ func DeleteTag(c *gin.Context) {
 	// 削除したいレコードのIDを指定
 	tagId, err := strconv.ParseUint(tagIdStr, 10, 32)
 	if err != nil {
-		fmt.Println(err)
+		log.Printf("Delete Tag Err: %v", err)
+		error.SendErrJSON("error", c)
+		return
 	}
 	delTag.ID = uint(tagId)
 
