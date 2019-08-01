@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"server/controllers/error"
+	"server/middleware/jwt"
 	"server/models/database"
 	"server/pkg/gdb"
 
@@ -30,16 +31,64 @@ func Login(c *gin.Context) {
 	}
 
 	//パスワード比較
+	if token, err := jwt.GenerateToken(adminUser.Name, adminUser.Pass); err == nil {
+		c.JSON(http.StatusOK, gin.H{
+			"status": 200,
+			"msg":    "success",
+			"auth": gin.H{
+				"token": token,
+			},
+		})
+	} else {
+		log.Fatalf("get.db.UserLoging err: %v", err)
+		error.SendErrJSON("error", c)
+	}
+}
+
+func Logout(c *gin.Context) {
+	var currentUser AdminUser
+	if err := c.ShouldBindJSON(&currentUser); err != nil {
+		error.SendErrJSON("error", c)
+		return
+	}
+	adminUser := database.Admin{}
+	if err := gdb.Instance().First(&adminUser, "name = ?", currentUser.User).Error; err != nil {
+		log.Printf("get.db.Signin err: %v", err)
+		error.SendErrJSON("error", c)
+		return
+	}
+
+	//パスワード比較
 	if err := bcrypt.CompareHashAndPassword([]byte(adminUser.Pass), []byte(currentUser.Password)); err != nil {
 		log.Printf("get.db.Signin err: %v", err)
 		error.SendErrJSON("error", c)
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"status": 200,
-		"msg":    "success",
-	})
+}
+
+func GetAdminInfo(c *gin.Context) {
+	if values, _ := c.Request.Header["X-Token"]; len(values) > 0 {
+		userToken := values[0]
+		adminInfo, err := jwt.ParseToken(userToken)
+		if err != nil {
+			log.Fatalf("get.db.UserLoging err: %v", err)
+			error.SendErrJSON("error", c)
+		} else {
+			adminUser := database.Admin{}
+			if err := gdb.Instance().First(&adminUser, "name = ?", adminInfo.UserId).Error; err != nil {
+				log.Printf("get.db.Signin err: %v", err)
+				error.SendErrJSON("error", c)
+				return
+			}
+
+			c.JSON(http.StatusOK, gin.H{
+				"status": 200,
+				"msg":    "success",
+				"user":   adminUser,
+			})
+		}
+	}
 }
 
 func AdminAction(c *gin.Context) {

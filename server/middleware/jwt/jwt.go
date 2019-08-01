@@ -38,7 +38,7 @@ func GenerateToken(userIdStr, uuid string) (string, error) {
 	expireTime := nowTime.Add(3 * time.Hour)
 
 	claims := Claims{
-		utils.EncodeMD5(userIdStr),
+		userIdStr,
 		utils.EncodeMD5(uuid),
 		jwt.StandardClaims{
 			ExpiresAt: expireTime.Unix(),

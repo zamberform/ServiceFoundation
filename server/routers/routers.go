@@ -41,6 +41,8 @@ func InitRouter(apiPrefix string, cmsPrefix string) *gin.Engine {
 	cms.POST("/login", suaction.Login)
 	cms.Use(jwt.AdminApiJwt(), auth.AdminRequired)
 	{
+		cms.POST("/admin/info", suaction.GetAdminInfo)
+		cms.POST("/admin/logout", suaction.Logout)
 		// real user can do the action
 		cms.POST("/users", user.GetUserList)
 		cms.POST("/tags", tag.GetAll)
