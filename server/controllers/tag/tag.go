@@ -8,6 +8,7 @@ import (
 	"server/models/database"
 	"server/pkg/gdb"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -35,12 +36,17 @@ func AddTag(c *gin.Context) {
 		return
 	}
 
+	addTag.CreatedAt = time.Now()
+	addTag.UpdatedAt = time.Now()
 	if err := gdb.Instance().Create(&addTag).Error; err != nil {
 		log.Fatalf("get.db.AppInfo err: %v", err)
 		error.SendErrJSON("error", c)
 		return
 	}
-	c.JSON(http.StatusOK, "success")
+	c.JSON(http.StatusOK, gin.H{
+		"status": 200,
+		"msg":    "",
+	})
 }
 
 func UpdateTag(c *gin.Context) {
@@ -50,14 +56,8 @@ func UpdateTag(c *gin.Context) {
 		return
 	}
 
-	tagIdStr := c.Param("id")
 	updateBeforeTag := database.Tag{}
-	// 削除したいレコードのIDを指定
-	tagId, err := strconv.ParseUint(tagIdStr, 10, 32)
-	if err != nil {
-		fmt.Println(err)
-	}
-	updateBeforeTag.ID = uint(tagId)
+	updateBeforeTag.ID = updateInfo.ID
 
 	if err := gdb.Instance().Find(&updateBeforeTag).Error; err != nil {
 		log.Fatalf("get.db.AppInfo err: %v", err)
@@ -78,7 +78,10 @@ func UpdateTag(c *gin.Context) {
 		error.SendErrJSON("error", c)
 	}
 
-	c.JSON(http.StatusOK, "success")
+	c.JSON(http.StatusOK, gin.H{
+		"status": 200,
+		"msg":    "",
+	})
 }
 
 func DeleteTag(c *gin.Context) {

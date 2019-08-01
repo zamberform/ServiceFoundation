@@ -28,10 +28,10 @@
               <span>{{ scope.row.color }}</span>
             </template>
           </el-table-column>
-          <el-table-column align="center" prop="created_at" label="Display_time" width="200">
+          <el-table-column align="center" prop="created_at" label="update_time" width="200">
             <template slot-scope="scope">
               <i class="el-icon-time" />
-              <span>{{ scope.row.create_time }}</span>
+              <span>{{ scope.row.updated_at }}</span>
             </template>
           </el-table-column>
           <el-table-column label="Actions" align="center" width="300" class-name="small-padding fixed-width">
@@ -69,7 +69,7 @@
 
     <el-dialog :visible.sync="dialogConfirmVisible" title="削除確認">
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogConfirmVisible = false">Confirm</el-button>
+        <el-button type="primary" @click="onDelConfirm">Confirm</el-button>
         <el-button type="block" @click="dialogConfirmVisible = false">Cancel</el-button>
       </span>
     </el-dialog>
@@ -77,7 +77,7 @@
 </template>
 
 <script>
-import { getList } from '@/api/tag'
+import { getList, addTag, updateTag, deleteTag } from '@/api/tag'
 
 export default {
   filters: {
@@ -96,6 +96,8 @@ export default {
       listLoading: true,
       dialogFormVisible: false,
       dialogConfirmVisible: false,
+      isEditMode: false,
+      currentRowId: 0,
       temp: {
         id: undefined,
         name: '',
@@ -117,7 +119,17 @@ export default {
     },
     onSubmit() {
       this.dialogFormVisible = true
-      this.$message('submit!')
+      if (this.isEditMode) {
+        updateTag(this.temp).then(response => {
+          this.dialogFormVisible = false
+          this.fetchData()
+        })
+      } else {
+        addTag(this.temp).then(response => {
+          this.dialogFormVisible = false
+          this.fetchData()
+        })
+      }
     },
     onCancel() {
       this.dialogFormVisible = false
@@ -135,6 +147,7 @@ export default {
       }
     },
     handleCreate() {
+      this.isEditMode = false
       this.resetTemp()
       this.dialogFormVisible = true
       this.$nextTick(() => {
@@ -142,6 +155,7 @@ export default {
       })
     },
     handleUpdate(row) {
+      this.isEditMode = true
       this.temp = Object.assign({}, row)
       this.temp.timestamp = new Date(this.temp.timestamp)
       this.dialogFormVisible = true
@@ -150,7 +164,14 @@ export default {
       })
     },
     deleteTag(row) {
+      this.currentRowId = row.id
       this.dialogConfirmVisible = true
+    },
+    onDelConfirm() {
+      deleteTag(this.currentRowId).then(response => {
+        this.dialogConfirmVisible = false
+        this.fetchData()
+      })
     }
   }
 }
