@@ -7,9 +7,9 @@ import (
 	"server/middleware/jwt"
 	"server/models/database"
 	"server/pkg/gdb"
+	"time"
 
 	"github.com/gin-gonic/gin"
-	"golang.org/x/crypto/bcrypt"
 )
 
 type AdminUser struct {
@@ -31,7 +31,13 @@ func Login(c *gin.Context) {
 	}
 
 	//パスワード比較
-	if token, err := jwt.GenerateToken(adminUser.Name, adminUser.Pass); err == nil {
+	// if err := bcrypt.CompareHashAndPassword([]byte(adminUser.Pass), []byte(currentUser.Password)); err != nil {
+	// 	log.Printf("get.db.Signin err: %v", err)
+	// 	error.SendErrJSON("error", c)
+	// 	return
+	// }
+
+	if token, err := jwt.GenerateToken(adminUser.Name, adminUser.Pass+string(time.Now().Unix())); err == nil {
 		c.JSON(http.StatusOK, gin.H{
 			"status": 200,
 			"msg":    "success",
@@ -46,23 +52,24 @@ func Login(c *gin.Context) {
 }
 
 func Logout(c *gin.Context) {
-	var currentUser AdminUser
-	if err := c.ShouldBindJSON(&currentUser); err != nil {
-		error.SendErrJSON("error", c)
-		return
-	}
-	adminUser := database.Admin{}
-	if err := gdb.Instance().First(&adminUser, "name = ?", currentUser.User).Error; err != nil {
-		log.Printf("get.db.Signin err: %v", err)
-		error.SendErrJSON("error", c)
-		return
-	}
-
-	//パスワード比較
-	if err := bcrypt.CompareHashAndPassword([]byte(adminUser.Pass), []byte(currentUser.Password)); err != nil {
-		log.Printf("get.db.Signin err: %v", err)
-		error.SendErrJSON("error", c)
-		return
+	if values, _ := c.Request.Header["X-Token"]; len(values) > 0 {
+		userToken := values[0]
+		blackList := database.TokenBlackList{}
+		blackList.Token = userToken
+		if err := gdb.Instance().Create(&blackList).Error; err != nil {
+			log.Printf("logout failed err: %v", err)
+			error.SendErrJSON("error", c)
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{
+			"status": 200,
+			"msg":    "success",
+		})
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"status": 300,
+			"msg":    "failed",
+		})
 	}
 
 }

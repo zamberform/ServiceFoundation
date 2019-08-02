@@ -8,6 +8,7 @@ import (
 	"server/models/database"
 	"server/pkg/gdb"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -32,20 +33,31 @@ func GetAll(c *gin.Context) {
 func AddArticle(c *gin.Context) {
 	addArticle := database.Article{}
 	if err := c.ShouldBindJSON(&addArticle); err != nil {
-		log.Fatalf("req.AppInfo err: %v", err)
+		log.Fatalf("add article info err: %v", err)
 		return
 	}
-	
+
+	checkDefinedArticle := database.Article{}
+	if err := gdb.Instance().Find(&checkDefinedArticle).Where("title = ?", addArticle.Title).Error; err != nil {
+		log.Printf("重複している: %v", err)
+		error.SendErrJSON("error", c)
+		return
+	}
+
+	addArticle.CreatedAt = time.Now()
+	addArticle.UpdatedAt = time.Now()
 	if err := gdb.Instance().Create(&addArticle).Error; err != nil {
 		log.Fatalf("get.db.AppInfo err: %v", err)
 		error.SendErrJSON("error", c)
 		return
 	}
-	c.JSON(http.StatusOK, "success")
+	c.JSON(http.StatusOK, gin.H{
+		"status": 200,
+		"msg":    "success",
+	})
 }
 
 func UpdateArticle(c *gin.Context) {
-	articleIdStr := c.Param("id")
 	updateInfo := database.Article{}
 	if err := c.ShouldBindJSON(&updateInfo); err != nil {
 		log.Printf("req.AppInfo err: %v", err)
@@ -53,14 +65,8 @@ func UpdateArticle(c *gin.Context) {
 	}
 
 	publishBeforeArticle := database.Article{}
-	// 削除したいレコードのIDを指定
-	articleId, err := strconv.ParseUint(articleIdStr, 10, 32)
-	if err != nil {
-		fmt.Println(err)
-	}
-	publishBeforeArticle.ID = uint(articleId)
 
-	if err := gdb.Instance().Find(&publishBeforeArticle).Error; err != nil {
+	if err := gdb.Instance().Find(&publishBeforeArticle).Where("id = ?", updateInfo.ID).Error; err != nil {
 		log.Printf("get.db.AppInfo err: %v", err)
 		error.SendErrJSON("error", c)
 		return
@@ -69,7 +75,8 @@ func UpdateArticle(c *gin.Context) {
 	publishAfterArticle := publishBeforeArticle
 	publishAfterArticle.Title = updateInfo.Title
 	publishAfterArticle.ContentDesc = updateInfo.ContentDesc
-
+	publishAfterArticle.UpdatedAt = time.Now()
+	publishAfterArticle.CommentFlg = updateInfo.CommentFlg
 	if err := gdb.Instance().Model(&publishBeforeArticle).Update(&publishAfterArticle).Error; err != nil {
 		log.Printf("get.db.AppInfo err: %v", err)
 		error.SendErrJSON("error", c)
@@ -83,8 +90,8 @@ func UpdateArticle(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"status":  200,
-		"err_msg": "success",
+		"status": 200,
+		"msg":    "success",
 	})
 }
 
@@ -160,6 +167,29 @@ func HideArticle(c *gin.Context) {
 	})
 }
 
+func FindArticle(c *gin.Context) {
+	articleIdStr := c.Param("id")
+	findArticle := database.Article{}
+	// 削除したいレコードのIDを指定
+	articleId, err := strconv.ParseUint(articleIdStr, 10, 32)
+	if err != nil {
+		fmt.Println(err)
+	}
+	findArticle.ID = uint(articleId)
+
+	if err := gdb.Instance().Find(&findArticle).Error; err != nil {
+		// log.Fatalf("get.db.AppInfo err: %v", err)
+		error.SendErrJSON("error", c)
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  200,
+		"msg":     "success",
+		"article": findArticle,
+	})
+}
+
 func DeleteArticle(c *gin.Context) {
 	articleIdStr := c.Param("id")
 	delArticle := database.Article{}
@@ -170,7 +200,7 @@ func DeleteArticle(c *gin.Context) {
 	}
 	delArticle.ID = uint(articleId)
 
-	if err := gdb.Instance().Find(&delArticle).Error; err != nil {
+	if err := gdb.Instance().First(&delArticle).Error; err != nil {
 		// log.Fatalf("get.db.AppInfo err: %v", err)
 		error.SendErrJSON("error", c)
 		return

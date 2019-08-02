@@ -49,6 +49,8 @@ func InitRouter(apiPrefix string, cmsPrefix string) *gin.Engine {
 		cms.POST("/comment/list", comment.GetCommentList)
 		cms.POST("/article/list", article.GetAll)
 
+		cms.GET("/article/:id", article.FindArticle)
+
 		cms.DELETE("/article/:id", article.DeleteArticle)
 		cms.DELETE("/tag/:id", tag.DeleteTag)
 		cms.DELETE("/user/:id", user.DeleteUser)

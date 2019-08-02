@@ -147,6 +147,12 @@ CREATE TABLE `admin` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 -- ----------------------------
--- add self admin user
+-- Table structure for token_black_list
 -- ----------------------------
+DROP TABLE IF EXISTS `token_black_list`;
+CREATE TABLE `token_black_list` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `token` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 

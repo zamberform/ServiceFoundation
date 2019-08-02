@@ -15,8 +15,7 @@
       </el-table-column>
       <el-table-column label="Title" min-width="300px">
         <template slot-scope="scope">
-          <!-- <router-link :to="'/article/update/'+scope.row.index" class="link-type"> -->
-          <router-link :to="'/article/editor/1'" class="link-type">
+          <router-link :to="'/article/editor/'+scope.row.id" class="link-type">
             <span>{{ scope.row.title }}</span>
           </router-link>
         </template>
@@ -35,8 +34,7 @@
 
       <el-table-column label="Actions" align="center" width="300" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
-          <!-- <router-link :to="'/article/update/'+row.index"> -->
-          <router-link :to="'/article/editor/1'">
+          <router-link :to="'/article/editor/'+row.id">
             <el-button type="primary" size="mini" icon="el-icon-edit">
               Edit
             </el-button>
@@ -53,7 +51,7 @@
 
     <el-dialog :visible.sync="dialogConfirmVisible" title="削除確認">
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogConfirmVisible = false">Confirm</el-button>
+        <el-button type="primary" @click="delConfirmed">Confirm</el-button>
         <el-button type="block" @click="dialogConfirmVisible = false">Cancel</el-button>
       </span>
     </el-dialog>
@@ -61,7 +59,7 @@
 </template>
 
 <script>
-import { getList } from '@/api/article'
+import { getList, delArticle } from '@/api/article'
 
 export default {
   filters: {
@@ -78,7 +76,8 @@ export default {
     return {
       list: null,
       listLoading: true,
-      dialogConfirmVisible: false
+      dialogConfirmVisible: false,
+      currentArticleId: null
     }
   },
   created() {
@@ -100,7 +99,14 @@ export default {
       row.status = status
     },
     deleteArticle(row) {
+      this.currentArticleId = row.id
       this.dialogConfirmVisible = true
+    },
+    delConfirmed() {
+      delArticle(this.currentArticleId).then(response => {
+        this.dialogConfirmVisible = false
+        this.fetchData()
+      })
     }
   }
 }

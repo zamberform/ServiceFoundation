@@ -15,7 +15,7 @@ import (
 func GetAll(c *gin.Context) {
 	tags := []database.Tag{}
 	if err := gdb.Instance().Find(&tags).Error; err != nil {
-		log.Fatalf("get.db.AppInfo err: %v", err)
+		log.Fatalf("not tags err: %v", err)
 		error.SendErrJSON("error", c)
 		return
 	}
