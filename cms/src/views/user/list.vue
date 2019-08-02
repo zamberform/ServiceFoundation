@@ -46,7 +46,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="Actions" width="120">
+      <el-table-column align="center" label="Actions" width="240">
         <template slot-scope="{row}">
           <el-button
             v-if="row.edit"
@@ -66,14 +66,24 @@
           >
             Edit
           </el-button>
+          <el-button size="mini" type="danger" @click="deleteUser(row)">
+            削除
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
+
+    <el-dialog :visible.sync="dialogConfirmVisible" title="削除確認">
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="onDelConfirm">Confirm</el-button>
+        <el-button type="block" @click="dialogConfirmVisible = false">Cancel</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { getList } from '@/api/user'
+import { getList, delUser, updateUserDesc } from '@/api/user'
 
 export default {
   filters: {
@@ -89,7 +99,9 @@ export default {
   data() {
     return {
       list: null,
-      listLoading: true
+      listLoading: true,
+      currentUserId: 0,
+      dialogConfirmVisible: false
     }
   },
   created() {
@@ -113,10 +125,22 @@ export default {
     },
     confirmEdit(row) {
       row.edit = false
-      row.originalTitle = row.introduce
-      this.$message({
-        message: 'The title has been edited',
-        type: 'success'
+      updateUserDesc(row.id, row).then(response => {
+        row.originalTitle = row.introduce
+        this.$message({
+          message: 'The title has been edited',
+          type: 'success'
+        })
+      })
+    },
+    deleteUser(row) {
+      this.currentUserId = row.id
+      this.dialogConfirmVisible = true
+    },
+    onDelConfirm() {
+      delUser(this.currentUserId).then(response => {
+        this.dialogConfirmVisible = false
+        this.fetchData()
       })
     }
   }

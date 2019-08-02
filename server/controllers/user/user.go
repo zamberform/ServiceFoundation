@@ -15,6 +15,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func Login(c *gin.Context) {
@@ -125,15 +126,35 @@ func AddUser(c *gin.Context) {
 		log.Fatalf("req.AppInfo err: %v", err)
 		return
 	}
+	addUser.PlatformId = 1
+	hash, err := bcrypt.GenerateFromPassword([]byte(addUser.Pass), bcrypt.DefaultCost)
+	if err != nil {
+		return
+	}
+	var user database.User
+	var isExist = false
+	if err := gdb.Instance().Where("name = ?", addUser.Name).First(&user).Error; err == nil {
+		isExist = true
+	}
 
+	if isExist {
+		c.JSON(http.StatusOK, gin.H{
+			"status": 300,
+			"msg":    "存在しているユーザー",
+		})
+		return
+	}
+	addUser.Pass = string(hash)
+	addUser.CreatedAt = time.Now()
+	addUser.UpdatedAt = time.Now()
 	if err := gdb.Instance().Create(&addUser).Error; err != nil {
 		log.Fatalf("get.db.AppInfo err: %v", err)
 		error.SendErrJSON("error", c)
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{
-		"status":  200,
-		"err_msg": "",
+		"status": 200,
+		"msg":    "",
 	})
 }
 
@@ -152,7 +173,7 @@ func GetUserList(c *gin.Context) {
 	})
 }
 
-func UpdateUser(c *gin.Context) {
+func UpdateUserDesc(c *gin.Context) {
 	updateInfo := database.User{}
 	if err := c.ShouldBindJSON(&updateInfo); err != nil {
 		log.Fatalf("req.AppInfo err: %v", err)
@@ -175,10 +196,7 @@ func UpdateUser(c *gin.Context) {
 	}
 
 	updateAfterUser := updateBeforeUser
-	updateAfterUser.Name = updateInfo.Name
-	updateAfterUser.Email = updateInfo.Email
 	updateAfterUser.Introduce = updateInfo.Introduce
-	updateAfterUser.AvatarURL = updateInfo.AvatarURL
 	if err := gdb.Instance().Model(&updateBeforeUser).Update(&updateAfterUser).Error; err != nil {
 		log.Printf("get.db.AppInfo err: %v", err)
 		error.SendErrJSON("error", c)
@@ -205,13 +223,13 @@ func DeleteUser(c *gin.Context) {
 	delUser.ID = uint(userId)
 
 	if err := gdb.Instance().Find(&delUser).Error; err != nil {
-		log.Printf("get.db.AppInfo err: %v", err)
+		log.Printf("not find user err: %v", err)
 		error.SendErrJSON("error", c)
 		return
 	}
 
 	if err := gdb.Instance().Delete(&delUser).Error; err != nil {
-		log.Printf("get.db.AppInfo err: %v", err)
+		log.Printf("delete user fail err: %v", err)
 		error.SendErrJSON("error", c)
 		return
 	}

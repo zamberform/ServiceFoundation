@@ -7,11 +7,8 @@
       <el-form-item label="ユーザーメール">
         <el-input v-model="form.email" />
       </el-form-item>
-      <el-form-item label="タグ">
-        <el-select v-model="form.role" placeholder="please select user role">
-          <el-option label="Zone one" value="Role1" />
-          <el-option label="Zone two" value="Role2" />
-        </el-select>
+      <el-form-item label="紹介">
+        <el-input v-model="form.introduce" />
       </el-form-item>
       <el-form-item label="パスワード">
         <el-input v-model="form.password" />
@@ -28,25 +25,33 @@
 </template>
 
 <script>
+import { addUser } from '@/api/user'
 
 export default {
   data() {
     return {
       form: {
         name: '',
-        region: '',
-        date1: '',
-        date2: '',
-        delivery: false,
-        type: [],
-        resource: '',
-        desc: ''
+        email: '',
+        introduce: '',
+        password: ''
       }
     }
   },
   methods: {
     onSubmit() {
-      this.$message('submit!')
+      if (this.form.subpassword === this.form.password) {
+        addUser(this.form).then(response => {
+          this.$message('submit!')
+        }).catch(error => {
+          this.$message(error)
+        })
+      } else {
+        this.$message({
+          message: '入力エラー',
+          type: 'warning'
+        })
+      }
     },
     onCancel() {
       this.$message({

@@ -7,3 +7,26 @@ export function getList(params) {
     params
   })
 }
+
+export function delComment(commentId) {
+  return request({
+    url: '/comment/' + commentId,
+    method: 'delete'
+  })
+}
+
+export function publishComment(commentId) {
+  return request({
+    url: '/comment/publish',
+    method: 'post',
+    commentId
+  })
+}
+
+export function hideComment(commentId) {
+  return request({
+    url: '/comment/cancel',
+    method: 'post',
+    commentId
+  })
+}

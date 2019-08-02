@@ -54,6 +54,8 @@ func InitRouter(apiPrefix string, cmsPrefix string) *gin.Engine {
 		cms.DELETE("/user/:id", user.DeleteUser)
 		cms.DELETE("/comment/:id", comment.DeleteComment)
 
+		cms.POST("/user/desc/:id", user.UpdateUserDesc)
+
 		cms.POST("/article/add", article.AddArticle)
 		cms.POST("/tag/add", tag.AddTag)
 		cms.POST("/user/add", user.AddUser)
@@ -61,7 +63,6 @@ func InitRouter(apiPrefix string, cmsPrefix string) *gin.Engine {
 
 		cms.POST("/article", article.UpdateArticle)
 		cms.POST("/tag", tag.UpdateTag)
-		cms.POST("/user", user.UpdateUser)
 		cms.POST("/comment", comment.PublishComment)
 
 		cms.POST("/article/push", article.PublishArticle)

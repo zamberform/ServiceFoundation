@@ -10,8 +10,8 @@ type User struct {
 	ActivatedAt *time.Time `json:"activated_at"`
 	Name        string     `json:"name"`
 	UUID        string     `json:"uuid"`
-	Pass        string     `json:"-"`
-	Email       string     `json:"-"`
+	Pass        string     `json:"password"`
+	Email       string     `json:"email"`
 	Introduce   string     `json:"introduce"`
 	AvatarURL   string     `json:"avatarURL"`
 	Status      int        `json:"status"`

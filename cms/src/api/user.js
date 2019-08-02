@@ -29,3 +29,26 @@ export function getList(token) {
     method: 'post'
   })
 }
+
+export function addUser(data) {
+  return request({
+    url: '/user/add',
+    method: 'post',
+    data
+  })
+}
+
+export function delUser(userId) {
+  return request({
+    url: '/user/' + userId,
+    method: 'delete'
+  })
+}
+
+export function updateUserDesc(userId, data) {
+  return request({
+    url: '/user/desc/' + userId,
+    method: 'post',
+    data
+  })
+}

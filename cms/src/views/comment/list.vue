@@ -49,7 +49,7 @@
 
     <el-dialog :visible.sync="dialogConfirmVisible" title="削除確認">
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogConfirmVisible = false">Confirm</el-button>
+        <el-button type="primary" @click="onDelConfirm">Confirm</el-button>
         <el-button type="block" @click="dialogConfirmVisible = false">Cancel</el-button>
       </span>
     </el-dialog>
@@ -57,7 +57,7 @@
 </template>
 
 <script>
-import { getList } from '@/api/comment'
+import { getList, delComment } from '@/api/comment'
 
 export default {
   filters: {
@@ -74,6 +74,7 @@ export default {
     return {
       list: null,
       listLoading: true,
+      currentRowId: 0,
       dialogConfirmVisible: false
     }
   },
@@ -85,7 +86,6 @@ export default {
       this.listLoading = true
       getList().then(response => {
         this.list = response.comments
-        console.log(this.list)
         this.listLoading = false
       })
     },
@@ -97,7 +97,14 @@ export default {
       row.status = status
     },
     deleteArticle(row) {
+      this.currentRowId = row.id
       this.dialogConfirmVisible = true
+    },
+    onDelConfirm() {
+      delComment(this.currentRowId).then(response => {
+        this.dialogConfirmVisible = false
+        this.fetchData()
+      })
     }
   }
 }
