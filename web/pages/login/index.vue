@@ -62,7 +62,7 @@ export default {
                 if(valide){
                     let {data} =  await this.$axios.post('/api/user/login',this.ruleForm)
                     
-                    if(data.status == 0){
+                    if(data.status == 200){
                         this.$store.commit('setLoginState', true)
                         this.$store.commit('token', data.user.token)
                         this.$store.commit('user', data.user.name)
@@ -82,8 +82,8 @@ export default {
             window.location.href = '/'
         },
         async logout(){
-            let {data} =  await this.$axios.post('/api/user/signout')        
-            if(data.status == 0){
+            let {data} =  await this.$axios.post('/api/user/signout', this.$store.getters['token'])        
+            if(data.status == 200){
                 this.$store.commit('setLoginState', false)
                 this.$store.commit('token', null)
                 this.$store.commit('user', null)

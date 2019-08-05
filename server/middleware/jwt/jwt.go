@@ -60,7 +60,7 @@ func ApiJwt() gin.HandlerFunc {
 		code = codes.SUCCESS
 		var commonRequest request.CommonReq
 		if reqErr := c.ShouldBindJSON(&commonRequest); reqErr != nil {
-			log.Fatalf("req.CommonInfo err: %v", reqErr)
+			log.Printf("jwt auth err: %v", reqErr)
 			return
 		}
 		token := commonRequest.User.Token

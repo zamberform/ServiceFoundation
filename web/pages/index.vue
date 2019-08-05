@@ -3,13 +3,13 @@
 	<nav-header :active="active"></nav-header>
 	<el-row type="flex" justify="center" class="content-blog">
 		<el-col :span="10">
-			<nuxt-link  v-for="item in list" :key="item.title" :to="{name:'article-id',params:{id:item.id}}" class="box-href">
+			<nuxt-link  v-for="item in articles" :key="item.title" :to="{name:'article-id',params:{id:item.id}}" class="box-href">
 				<el-card class="box-card" shadow="hover">
 					<h2 class="box-title">{{item.title}}</h2>
 					<div class="box-icon">
-						<span><i class="el-icon-date"></i>&nbsp;{{item.time}}</span>
+						<span><i class="el-icon-date"></i>&nbsp;{{item.updated_at}}</span>
 					</div>
-					<div class="box-content">{{item.des}}</div>
+					<div class="box-content">{{item.content_desc}}</div>
 					<div class="box-content">{{item.tag}}</div>
 				</el-card>
 			</nuxt-link>
@@ -64,17 +64,17 @@ export default {
 	async asyncData({app}) {
     let json = {page:1,pagesize:5}
     let data = await app.$axios.$get(`/api/article/list`,{params:json});
-    let {list,count} = data;
-    let lately = list.slice(0,4);
+    let {articles,count} = data;
+    let lately = articles.slice(0,4);
 
-		return {list,count,lately}
+		return {articles,count,lately}
   },
 	methods: {
 		pagination(page) {
 			let json = {page,pagesize:5}
 			this.$axios.$get(`/api/article/list`,{params:json}).then(res=>{
-				let {error,count,list} = res.data;
-        this.list =list;
+			  let {error,count,articles} = res.data;
+        	  this.articles =articles;
         
 			});
 		}

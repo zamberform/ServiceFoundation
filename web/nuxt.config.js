@@ -33,7 +33,10 @@ export default {
   plugins: [
     '@/plugins/element-ui',
     '@/plugins/axios',
-    { src: "~plugins/persistedstate.js", ssr: false }
+    { 
+      src: "~plugins/persistedstate.js",
+      ssr: false 
+    }
   ],
   router: {
     middleware: ['auth']
@@ -60,12 +63,12 @@ export default {
         javascriptEnabled: true,
         modifyVars: {
           'primary-color': 'rgba(222, 12, 101, 1.0)',
-          'component-background': '#ffffff',
+          'component-background': '#ffffff'
         }
       }
     }
   },
   proxy: {
-    '/api': 'http://localhost:8000',
+    '/api': 'http://localhost:3333'
   }
 }

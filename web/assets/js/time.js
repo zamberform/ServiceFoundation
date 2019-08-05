@@ -67,15 +67,15 @@ export const getRelativeTime = (timeStamp) => {
   let resStr = ''
   let dirStr = IS_EARLY ? '前' : '后'
 
-  if (diff < 1000) resStr = '刚刚'
+  if (diff < 1000) resStr = '先ほど'
   // 少于等于59秒
   else if (diff < 60000) resStr = parseInt(diff / 1000) + '秒' + dirStr
   // 多于59秒，少于等于59分钟59秒
-  else if (diff >= 60000 && diff < 3600000) resStr = Math.floor(diff / 60000) + '分钟' + dirStr
+  else if (diff >= 60000 && diff < 3600000) resStr = Math.floor(diff / 60000) + '分' + dirStr
   // 多于59分钟59秒，少于等于23小时59分钟59秒
-  else if (diff >= 3600000 && diff < 86400000) resStr = Math.floor(diff / 3600000) + '小时' + dirStr
+  else if (diff >= 3600000 && diff < 86400000) resStr = Math.floor(diff / 3600000) + '時' + dirStr
   // 多于23小时59分钟59秒，少于等于29天59分钟59秒
-  else if (diff >= 86400000 && diff < 2623860000) resStr = Math.floor(diff / 86400000) + '天' + dirStr
+  else if (diff >= 86400000 && diff < 2623860000) resStr = Math.floor(diff / 86400000) + '日' + dirStr
   // 多于29天59分钟59秒，少于364天23小时59分钟59秒，且传入的时间戳早于当前
   else if (diff >= 2623860000 && diff <= 31567860000 && IS_EARLY) resStr = getDate(timeStamp)
   else resStr = getDate(timeStamp, 'year')

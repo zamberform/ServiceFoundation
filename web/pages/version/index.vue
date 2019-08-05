@@ -6,15 +6,15 @@
 			<h1>タイムライン</h1>
 		</el-col>
 	</el-row>
-	<el-row type="flex" class="version" justify="center" v-for="item in list" :key="item._id">
+	<el-row type="flex" class="version" justify="center" v-for="item in versions" :key="item._id">
 		<el-col :span="10">
 			<el-card class="box-card">
 			  <div slot="header" class="clearfix">
 			    <span style="font-weight:bold;">{{item.version}}</span>
-			    <span style="float:right">{{item.time}}</span>
+			    <span style="float:right">{{item.created_at}}</span>
 			  </div>
-			  <div v-html="item.content">
-                  {{item.content}}
+			  <div v-html="item.name">
+                  {{item.name}}
               </div>
 			</el-card>
 		</el-col>
@@ -32,9 +32,9 @@ export default {
         }
     },
     async asyncData({app}) {
-        let result = await app.$axios.$get(`/api/version/getVersion`);
-        let {error,list} = result;
-        return {list}
+        let result = await app.$axios.$get(`/api/version/list`);
+        let {error,versions} = result;
+        return {versions}
     },
     components:{
         NavHeader

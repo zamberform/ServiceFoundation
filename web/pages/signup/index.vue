@@ -131,13 +131,13 @@ export default {
           let { username, useremail, userpwd } = this.registerform
           setTimeout(() => {
             this.$axios
-              .$post('api/auth/register', {
-                username: username,
+              .$post('api/user/register', {
+                name: username,
                 email: useremail,
                 password: userpwd
               })
               .then(res => {
-                if (res.code === 0) {
+                if (res.status === 200) {
                   this.$message({
                     showClose: true,
                     message: 'サイン成功、メールを確認してください',
@@ -147,7 +147,7 @@ export default {
                 } else {
                   this.$message({
                     showClose: true,
-                    message: 'サイン失敗',
+                    message: res.msg,
                     type: 'error'
                   })
                 }

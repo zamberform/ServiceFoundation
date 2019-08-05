@@ -23,9 +23,33 @@ func GetAll(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":   200,
-		"msg":      "",
+		"msg":      "success",
 		"count":    len(articles),
 		"articles": articles,
+	})
+}
+
+func GetArticleInfo(c *gin.Context) {
+	articleIdStr := c.Param("id")
+	publishedArticle := database.Article{}
+	// 削除したいレコードのIDを指定
+	articleId, err := strconv.ParseUint(articleIdStr, 10, 32)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	publishedArticle.ID = uint(articleId)
+
+	if err := gdb.Instance().Find(&publishedArticle).Error; err != nil {
+		log.Fatalf("not find article err: %v", err)
+		error.SendErrJSON("error", c)
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  200,
+		"msg":     "success",
+		"article": publishedArticle,
 	})
 }
 

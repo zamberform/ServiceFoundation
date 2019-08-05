@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type AdminUser struct {
@@ -31,11 +32,11 @@ func Login(c *gin.Context) {
 	}
 
 	//パスワード比較
-	// if err := bcrypt.CompareHashAndPassword([]byte(adminUser.Pass), []byte(currentUser.Password)); err != nil {
-	// 	log.Printf("get.db.Signin err: %v", err)
-	// 	error.SendErrJSON("error", c)
-	// 	return
-	// }
+	if err := bcrypt.CompareHashAndPassword([]byte(adminUser.Pass), []byte(currentUser.Password)); err != nil {
+		log.Printf("get.db.Signin err: %v", err)
+		error.SendErrJSON("error", c)
+		return
+	}
 
 	if token, err := jwt.GenerateToken(adminUser.Name, adminUser.Pass+string(time.Now().Unix())); err == nil {
 		c.JSON(http.StatusOK, gin.H{
@@ -79,7 +80,7 @@ func GetAdminInfo(c *gin.Context) {
 		userToken := values[0]
 		adminInfo, err := jwt.ParseToken(userToken)
 		if err != nil {
-			log.Fatalf("get.db.UserLoging err: %v", err)
+			log.Printf("get.db.UserLoging err: %v", err)
 			error.SendErrJSON("error", c)
 		} else {
 			adminUser := database.Admin{}

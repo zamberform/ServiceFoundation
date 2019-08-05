@@ -8,6 +8,7 @@ import (
 	"server/controllers/comment"
 	"server/controllers/tag"
 	"server/controllers/user"
+	"server/controllers/version"
 
 	"server/middleware/auth"
 	"server/middleware/jwt"
@@ -22,19 +23,24 @@ func InitRouter(apiPrefix string, cmsPrefix string) *gin.Engine {
 
 	r.POST("/app", app.AppInfo)
 	apis := r.Group(apiPrefix)
-	apis.Use(jwt.ApiJwt())
+	apis.GET("/article/list", article.GetAll)
+	apis.POST("/article/:id", article.GetArticleInfo)
+	apis.POST("/tag/list", tag.GetAll)
+	apis.POST("/signin", user.SignIn)
+	apis.GET("/version/list", version.GetAll)
+
+	apis.POST("/user/register", user.Register)
+	apis.POST("/user/login", user.Login)
+	apis.Use(auth.SigninRequired)
 	{
-		apis.POST("/article/list", article.GetAll)
-		apis.POST("/tag/list", auth.SigninRequired, tag.GetAll)
-		apis.POST("/comment/list", auth.SigninRequired, comment.GetAll)
-		apis.POST("/comment", auth.SigninRequired, auth.VipReqired, comment.AddComment)
-		apis.POST("/signin", user.SignIn)
-		// real user can do the action
-		apis.POST("/actions", auth.SigninRequired, action.DoAction)
+		apis.POST("/auth", user.CheckAuth)
+		apis.POST("/comment/list/:id", comment.GetArticleComments)
+		apis.POST("/comment", comment.AddComment)
+		apis.POST("/actions", action.DoAction)
 		// vip user can do
-		apis.POST("/vip", auth.SigninRequired, auth.VipReqired, action.DoVipAction)
+		apis.POST("/vip", auth.VipReqired, action.DoVipAction)
 		// real user can quit
-		apis.POST("/quits", user.Withdrawal)
+		apis.POST("/user/signout", user.Logout)
 	}
 
 	cms := r.Group(cmsPrefix)

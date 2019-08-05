@@ -26,5 +26,8 @@ export const getters = {
   },
   isLimit(state) {
     return state.isLimit
+  },
+  token(state) {
+    return state.token
   }
 }

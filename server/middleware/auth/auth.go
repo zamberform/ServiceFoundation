@@ -10,7 +10,11 @@ import (
 
 func SigninRequired(c *gin.Context) {
 	var commonReq request.CommonReq
-	commonInfo, _ := c.Get("common")
+	commonInfo, exists := c.Get("common")
+
+	if !exists {
+		return
+	}
 
 	commonReq = commonInfo.(request.CommonReq)
 	userId := commonReq.User.UserId
@@ -18,7 +22,7 @@ func SigninRequired(c *gin.Context) {
 	var user database.User
 	var err error
 	if user, err = searchUser(userId); err != nil {
-		log.Fatalf("req.Auth err: %v", err)
+		log.Printf("req.Auth err: %v", err)
 		return
 	}
 
@@ -36,7 +40,7 @@ func VipReqired(c *gin.Context) {
 	var user database.User
 	var err error
 	if user, err = searchVipUser(userId); err != nil {
-		log.Fatalf("req.Auth err: %v", err)
+		log.Printf("req.Auth err: %v", err)
 		return
 	}
 

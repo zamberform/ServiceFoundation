@@ -4,15 +4,15 @@
     <el-row type="flex" justify="center">
       <el-col :span="14" class="detail_title">
           <div>{{title}}</div>
-          <div class="time">更新時間：{{time}}&nbsp;&nbsp;&nbsp;&nbsp;</div>
+          <div class="time">更新時間：{{updated_at}}&nbsp;&nbsp;&nbsp;&nbsp;</div>
           <div class="time">タグ：{{tag}}&nbsp;&nbsp;&nbsp;&nbsp;</div>
       </el-col>
 
     </el-row>
     <el-row type="flex" justify="center">
       <el-col :span="14" class="detail_content">
-        <div v-show="!content">データがない</div>
-        <div v-html="content" class="md markdown-body"></div>
+        <div v-show="!content_desc">データがない</div>
+        <div v-html="content_desc" class="md markdown-body"></div>
       </el-col>
     </el-row>
     <el-row type="flex" justify="center">
@@ -24,11 +24,11 @@
       <el-col :span="14">
         <el-card class="box-card" v-show="commentList.length !== 0" v-for="(item, index) in commentList" :key="index">
           <div slot="header" class="clearfix">
-            <span style="font-weight: bold;">{{item.username}} <el-tag type="success" v-show="author.includes(item.username)">が</el-tag> コメント：</span>
-            <span style="float: right; padding: 3px 0;font-weight: bold;"><Time :time="item.time" :interval="1" /></span>
+            <span style="font-weight: bold;">{{item.user.name}} <el-tag type="success" v-show="author.includes(item.user.name)">が</el-tag> コメント：</span>
+            <span style="float: right; padding: 3px 0;font-weight: bold;"><Time :time="item.created_at" :interval="1" /></span>
           </div>
           <div>
-            {{item.content}}
+            {{item.comment}}
           </div>
         </el-card>
       </el-col>
@@ -36,10 +36,10 @@
     <el-row type="flex" justify="center">
       <el-col :span="15" class="detail_content" style="margin-left:-63px;">
         <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
-          <el-form-item label="名前" prop="username">
+          <el-form-item v-if="$store.getters['userName'] === null" label="名前" prop="username">
             <el-input type="text" v-model="ruleForm.username" @change="usernameChange" autocomplete="off" placeholder="ユーザー名"></el-input>
           </el-form-item>
-          <el-form-item label="メール" prop="email">
+          <el-form-item v-if="$store.getters['userName'] === null" label="メール" prop="email">
             <el-input type="text" v-model="ruleForm.email" autocomplete="off" placeholder="メールを入力してください"></el-input>
           </el-form-item>
           <el-form-item label="コメント" prop="content">
@@ -73,7 +73,6 @@ export default {
       }
     };
     var validateEmail = (rule, value, callback) => {
-      console.log(value)
       const reg = /^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$/
       if (value === '') {
         callback(new Error('メールを入力してください'));
@@ -96,7 +95,7 @@ export default {
     return {
       active:'index',
       ruleForm: {
-        username: '',
+        username: this.$store.getters['userName'],
         email: '',
         content: ''
       },
@@ -113,16 +112,16 @@ export default {
       },
       commentList: [],
       count: 0,
-      author: [],
+      author: ['admin', 'editor'],
       authorStatus: false
     }
 	},
 	async asyncData({app,params}) {
 		let json = {id:params.id}
-        let result = await app.$axios.$get(`/api/article/getFrontArticleInfo`,{params:json});
-        let info = result.info;
-        let {content,des,tag,time,title} = info;
-		return {title,des,content,tag,time}
+    let result = await app.$axios.$post(`/api/article/` + params.id);
+    let info = result.article;
+    let {content_desc,tag,updated_at,title} = info;
+		return {title,content_desc,tag,updated_at}
 	},
     head() {
 		return {
@@ -144,7 +143,11 @@ export default {
         submitForm(formName) {
             this.$refs[formName].validate((valid) => {
                 if (valid) {
-                    let json = Object.assign({}, {comment: Object.assign(this.ruleForm, {time: new Date().getTime()}), id: this.$route.params.id})
+                    this.ruleForm.articleId = this.$route.params.id
+                    if (this.$store.getters['userName'] !== null) {
+                      this.ruleForm.username = this.$store.getters['userName']
+                    }
+                    let json = Object.assign({}, this.ruleForm)
                     this.commentsSubmit(json, formName)
                 } else {
                     this.$notify({
@@ -162,7 +165,7 @@ export default {
         async commentsSubmit (json, formName) {
             try {
                 let {status} = await this.$axios.$post(`/api/comment`, json)
-                if (status == 0) {
+                if (status == 200) {
                     this.$refs[formName].resetFields()
                     this.$notify({
                         title: '成功',
@@ -185,12 +188,11 @@ export default {
         },
         async commentLists (id) {
             try {
-                let {count, comments} = await this.$axios.$post(`/api/comment/list`, qs.stringify({ 'id': id }))
-                let {author} = await this.$axios.$post(`/api/comment/config/list`, qs.stringify({ 'id': id }))
+                let {count, comments} = await this.$axios.$post(`/api/comment/list/` + id)
                 this.count = count
-
-                this.commentList = comments.reverse()
-                this.author = author
+                if (count > 0) {
+                  this.commentList = comments.reverse()
+                }
             } catch (error) {
                 // handle error
                 console.log(error)

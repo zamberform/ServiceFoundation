@@ -5,12 +5,14 @@ export default (ctx) => {
     const token = ctx.store.state.userToken
     console.log(token)
     ctx.$axios.$post('api/auth', {
-      token: token
+      headers: {
+        'Auth-Token': token
+      }
     }).then(res => {
       const data = res
-      if (data.status === 1) {
+      if (data.status === 333) {
         ctx.store.commit('token', data.new_token)
-      } else if (data.status > 10) {
+      } else if (data.status > 1000) {
         ctx.redirect('/error')
       }
     }).catch(err => console.log(err))
