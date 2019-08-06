@@ -33,9 +33,9 @@ export default {
   plugins: [
     '@/plugins/element-ui',
     '@/plugins/axios',
-    { 
+    {
       src: "~plugins/persistedstate.js",
-      ssr: false 
+      ssr: false
     }
   ],
   router: {
@@ -69,6 +69,6 @@ export default {
     }
   },
   proxy: {
-    '/api': 'http://localhost:3333'
+    '/api': 'http://gin:3333'
   }
 }

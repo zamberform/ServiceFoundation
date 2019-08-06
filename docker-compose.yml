@@ -17,6 +17,7 @@ services:
       dockerfile: images/cms/Dockerfile
     volumes:
       - ./cms:/app
+      - ./cms/node_modules
     depends_on:
       - gin
   web:
@@ -25,6 +26,7 @@ services:
       dockerfile: images/web/Dockerfile
     volumes:
       - ./web:/app
+      - ./web/node_modules
     depends_on:
       - gin
   nginx:

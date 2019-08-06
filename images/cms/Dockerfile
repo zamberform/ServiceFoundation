@@ -4,5 +4,6 @@ WORKDIR /app
 COPY cms .
 
 RUN npm i -g yarn
+RUN apk add --no-cache git
 
-CMD yarn install && yarn run dev
+CMD yarn --pure-lockfile && yarn cache clean && yarn install && yarn run dev

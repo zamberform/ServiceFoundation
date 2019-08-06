@@ -39,9 +39,9 @@ func Setup(dbType, userName, password, host, name string) {
 	db.Callback().Update().Replace("gorm:update_time_stamp", updateTimeStampForUpdateCallback)
 	db.Callback().Delete().Replace("gorm:delete", deleteCallback)
 
-	db.DB().SetMaxIdleConns(100)
-	db.DB().SetMaxOpenConns(1000)
-	db.DB().SetConnMaxLifetime(10000)
+	db.DB().SetMaxIdleConns(1000)
+	db.DB().SetMaxOpenConns(10000)
+	db.DB().SetConnMaxLifetime(time.Second * 1000)
 }
 
 func CloseDB() {
