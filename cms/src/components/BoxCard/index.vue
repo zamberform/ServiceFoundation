@@ -55,7 +55,7 @@ export default {
 
 <style lang="scss" >
 .box-card-component{
-  background:url('/images/login.jpg') no-repeat;
+  background:url('/admin/images/login.jpg') no-repeat;
   .el-card__header {
     padding: 0px!important;
   }

@@ -11,22 +11,12 @@ services:
       - redis
     environment:
       GO111MODULE: "on"
-  cms:
-    build:
-      context: .
-      dockerfile: images/cms/Dockerfile
-    volumes:
-      - ./cms:/app
-      - ./cms/node_modules
-    depends_on:
-      - gin
   web:
     build:
       context: .
       dockerfile: images/web/Dockerfile
     volumes:
       - ./web:/app
-      - ./web/node_modules
     depends_on:
       - gin
   nginx:
@@ -38,7 +28,6 @@ services:
     depends_on:
       - gin
       - web
-      - cms
     ports:
       - 80:80
     environment:

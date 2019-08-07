@@ -1,9 +1,16 @@
-FROM node:10.10-alpine as build-stage
+FROM node:12-alpine as build-stage
 WORKDIR /app
 
 COPY cms .
-
-RUN npm i -g yarn
+RUN apk update && \
+    npm install -g npm
 RUN apk add --no-cache git
+RUN npm i -g yarn
 
-CMD yarn --pure-lockfile && yarn cache clean && yarn install && yarn run dev
+RUN yarn cache clean && yarn && yarn run build:prod
+
+FROM nginx:stable-alpine as production-stage
+COPY --from=build-stage /app/dist /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
+

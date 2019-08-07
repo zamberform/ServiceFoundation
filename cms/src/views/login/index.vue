@@ -173,7 +173,7 @@ $light_gray:#eee;
   min-height: 100%;
   width: 100%;
   background-color: $bg;
-  background:url('/images/login.jpg') no-repeat;
+  background:url('/admin/images/login.jpg') no-repeat;
   overflow: hidden;
 
   .login-form {

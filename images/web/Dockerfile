@@ -5,4 +5,4 @@ COPY web .
 
 RUN npm i -g yarn
 
-CMD yarn install --ignore-engines && yarn run dev
+CMD yarn install --ignore-engines && yarn run build && yarn run start
