@@ -72,7 +72,22 @@ export default {
     port: 3000, // デフォルト: 3000
     host: '0.0.0.0', // デフォルト: localhost
   },
-  proxy: {
-    '/api': 'http://gin:3333'
+  axios: {
+    baseURL: 'http://gin:3333',
+    browserBaseURL: 'http://gin:3333',
+    proxyHeaders: true
+  },
+  generate: {
+    routes: function () {
+      return axios.get('https://gin:3333/api/article')
+      .then((res) => {
+        return res.data.map((article) => {
+          return {
+            route: '/article/' + article.id,
+            payload: article
+          }
+        })
+      })
+    }
   }
 }
