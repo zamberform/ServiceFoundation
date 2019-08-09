@@ -73,13 +73,14 @@ export default {
     host: '0.0.0.0', // デフォルト: localhost
   },
   axios: {
-    baseURL: 'http://gin:3333',
-    browserBaseURL: 'http://gin:3333',
-    proxyHeaders: true
+    proxy: true
+  },
+  proxy: {
+    '/api/': { target: 'http://gin:3333/api', pathRewrite: {'^/api/': ''}, changeOrigin: true }
   },
   generate: {
     routes: function () {
-      return axios.get('https://gin:3333/api/article')
+      return axios.get('http://gin:3333/api/article')
       .then((res) => {
         return res.data.map((article) => {
           return {
