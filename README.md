@@ -1,2 +1,2 @@
 # gin-mysql-vue-nginx-redis
-base for the server project development, this is foundation
+base for the server project development, this is foundation like a blog
